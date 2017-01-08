@@ -1,0 +1,56 @@
+Welcome to EMPIRES!
+
+  You rule a small European country with many problems. You must manage grain,
+capital, land and an army to survive and thrive. You only have a limited number
+of years to build your empire from humble beginnings. Good rule will be rewarded
+with greater and greater recognition and titles.
+
+Taxes:
+- Customs tax applies only to immigrants to your nation. Lower customs tax may result
+in more immigration.
+- Sales tax is intwined into your eocnomy. While it has the potentional to raise 
+lots of money, it can also stifle industrial profits if raised to high.
+- Income taxes are paid by all inhabitants and industry. Lower income tax may also
+result in increased industrial output.
+
+You have the option to invest your earnings in different types of trade and industry.
+Investments:
+- Marketplaces are a cheap investment that is quite profitable and encourage Merchants,
+which grows your middle class.
+- Grain mills are necessary to process the harvest. They do much better in years with
+a large harvest.
+- Foundries are necessary for creating a large army. Several of them will allow a much
+larger army than you could otherwise equip.
+- Shipyards have the greatest profit potentional, but they also do much better during
+good weather, do to a larger volume of orders.
+- Soldiers are needed to protect your empire and attack others. They cost an initial
+investment, and you must pay to maintain and train a solder every year. They also require
+a larger share of grain every year.
+- Palace is a necessary expense to secure your status and legacy. It is constructed 5%
+at a time.
+
+Grain market:
+You can buy and sell grain on the grain market.
+You always lose 10% as a brokerage fee when dealing on the grain market.
+When you sell your grain at a different price, the market price becomes a weighted average
+of the sales prices you have set.
+You cannot buy grain from yourself through the grain market (you cannot use the market as a
+way to avoid rats!)
+
+Other hints:
+Don't forget to leave a portion of your grain reserve for planting next years harvest!
+Giving your people more grain than they require is likely to resuit in a particularly
+prosperous year, which will encourage more babies born, and more immigrants to come to
+your nation! (including Merchants and Nobles!)
+
+The is a game for up to 6 players. Any nations not played by humans will automatically
+be played by AI players.
+
+"Winning":
+- To become a Prince, have 8 marketplaces, 4 mills, a palace 20% completed, more >10 nobles,
+>2300 serfs, and a land/serf ratio of >4.8.
+
+- To become a King, have 14 marketplaces, 6 mills, a palacee 60% complete, 1 foundry, 
+>25 nobles, >2600 serfs, and a land/serf ratio of >5.0.
+
+- To become an Emperor, meet the king requirements, and have >40 nobles, and >3100 serfs.
