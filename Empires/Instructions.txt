@@ -26,7 +26,7 @@ good weather, do to a larger volume of orders.
 - Soldiers are needed to protect your empire and attack others. They cost an initial
 investment, and you must pay to maintain and train a solder every year. They also require
 a larger share of grain every year.
-- Palace is a necessary expense to secure your status and legacy. It is constructed 5%
+- Palace is a necessary expense to secure your status and legacy. It is constructed 10%
 at a time.
 
 Grain market:
