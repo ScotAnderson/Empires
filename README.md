@@ -1,6 +1,11 @@
 # Empires
+(Not yet functional!)
 
 Remake of an old text game (Rats ate 23% of the grain reserve)
+
+Original Empire game was by Peter Trefonas, it also credited these games:
+- Hammurabi by Rick Merril & David AHL
+- Santa Paravia by George Blank
 
 I played the DOS version of this game when I was younger and loved it. I haven't found a copy of the DOS version, but I was able to find a version of the game for TRS-80, which is allowing me to remake it so it is easier to play and has less bugs. (The original version breaks all the time.)
 
