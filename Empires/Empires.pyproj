@@ -22,10 +22,19 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="display\screenutilities.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="display\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Empires.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Instructions.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="display\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
