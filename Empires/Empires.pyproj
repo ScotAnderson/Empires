@@ -32,6 +32,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Instructions.txt" />
+    <Content Include="VariableMapping.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="display\" />

@@ -1,0 +1,65 @@
+A  == playerData (array)
+AD == armyGrainDemands
+BA == barbarianLands
+D  == (intermediate variable for calculating immigrants due to giving extra food to people)
+DA == armyStarvation
+DB == births
+DD == deaths
+DE == immigrants
+DM == malnutritionDeaths
+DS == starvationDeaths
+E  == (menu input variable in taxes and investments phase)
+E1 == (price of investment player is trying to buy)
+E2 == ????
+F1 == marketProfit
+F2 == millProfit
+F3 == foundryProfit
+F4 == shipyardProfit
+F5 == soldierCost
+FC == customsCollected
+FI == incomeCollected
+FS == salesCollected
+H  == (menu input variable in market phase, max number of player attacks during attack phase)
+H1 == (menu input variable in market phase)
+H2 == (menu input variable in market phase)
+H3 == (intermediate variable for calculating the purchase of grain from the market)
+HA == grainHarvest
+HM == armyShare (grain given to army)
+HS == peopleShare (grain given to people)
+I  == (temporary counter in various places)
+I1 == newMerchants
+I2 == newNobles
+II == (Counter for the pause function at GOSUB59)
+IQ == (number of attacks the player has made this turn)
+J  == (backup counter in various places, for if I is already in use)
+K  == playerNumber (Main loop counter, set equal to whatever player has the current turn)
+KK == (Flag for if game should end, if someone has won, etc.)
+KL == ???
+LA == usableLand
+NP == numberOfHumanPlayers
+NW == weather
+NY == currentYear
+PA == (intermediate variable used in the duplicate version of the armyStarvation code???)
+PD == peopleGrainDemands
+PO == people (number of people == serfs + merchants + nobles)
+PT == populationChange
+RA == ratesAte
+Q  == ???
+Q0 == (ai turn temp variable)
+Q2 == (ai turn temp variable)
+Q3 == (ai turn temp variable)
+Q4 == (ai turn temp variable)
+Q5 == (ai turn temp variable)
+Q6 == (ai turn temp variable)
+Q7 == (ai turn temp variable)
+Q8 == (ai turn temp variable)
+Q9 == (ai turn temp variable)
+QB == (ai turn temp variable)
+QC == (ai turn temp variable)
+QD == (ai turn temp variable)
+QF == ????
+QP == (ai turn temp variable)
+QR == (ai turn temp variable)
+Z  == players (array)
+Z  == (you can use the same variable name for individual variables and arrays, this one is a temp variable used in various places)
+

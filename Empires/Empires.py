@@ -42,6 +42,7 @@ def safeRandInt(lower, upper):
 # 11 is the number of marketplaces
 # 12 is the number of grain mills
 # 13 is the number of foundries
+# 14 is number of shipyards?
 # 15 is number of soldiers
 # 16 is how much of a palace has been built
 # 17 is the index of the current title in the player array
@@ -63,15 +64,13 @@ variableO = 0
 variableZ = ""
 
 #Suspect this is how much land the barbarians have...
-variableBA = 6000
+barbarianLands = 6000
 
 #This is the variable to determine if the game is over (someone has won)
 variableKK = 0
 
 def GetFullPlayerName(playerNumber):
     return "{0} {1} of {2}".format(players[playerNumber][playerData[playerNumber][17]], players[playerNumber][0], players[playerNumber][1])
-
-
 
 
 # Original code 395- - 409
@@ -100,8 +99,7 @@ def CheckForPlague(playerNumber):
         sleep(8)
 
 
-
-def DoAITurn(playerNumber):
+def DoAITurn(playerNumber, weather):
     # It is very unclear what this line is doing
     # 413 FOR Q = 1 TO NP : If A(Q, 0) <> 0 Next Q : PRINT : End
 
@@ -161,14 +159,120 @@ def DoAITurn(playerNumber):
     variableQC = variableQC / variableQP
     variableQD = variableQD / variableQP
 
-    # TODO: FInish this section (left off on line 433)
-    #variableQ2 = int(variableQ2 + safeRandInt(1, 200) - safeRandInt(1, 200))
+    while True:
+        variableQ2 = int(variableQ2 + safeRandInt(1, 200) - safeRandInt(1, 200))
+        variableQ3 = int(variableQ3 + safeRandInt(1, 1000) - safeRandInt(1, 1000))
+        variableQ4 = variableQ4 + random() - random()
+        variableQ5 = int(variableQ5 + safeRandInt(1, 1500) - safeRandInt(1, 1500))
+        variableQ6 = int(variableQ6 + safeRandInt(1, 25) - safeRandInt(1, 25))
+        if variableQ4 < 0:
+            variableQ4 = 0
+        else:
+            break
+
+    variableQ7 = int(variableQ7 + safeRandInt(1, 4) - safeRandInt(1, 4))
+    variableQ8 = int(variableQ8 + safeRandInt(1, 2) - safeRandInt(1, 2))
+    if random() <= 0.3:
+        variableQ9 = int(variableQ9 + safeRandInt(1, 2) - safeRandInt(1, 2))
+        variableQ0 = int(variableQ0 + safeRandInt(1, 2) - safeRandInt(1, 2))
+        if random() <= 0.5:
+            variableQB = int(variableQB + safeRandInt(1, 2) - safeRandInt(1, 2))
+            variableQC = int(variableQC + safeRandInt(1, 2) - safeRandInt(1, 2))
+
+    playerData[playerNumber][3] = variableQ2
+    if variableQ3 > playerData[playerNumber][5] and safeRandInt(1, 9) > 6:
+        playerData[playerNumber][5] = variableQ3
+        playerData[playerNumber][6] = variableQ4
+        if weather < 3:
+            playerData[playerNumber][6] = playerData[playerNumber][6] + random() / 1.5
+
+
+    playerData[playerNumber][4] = variableQ5
+    if variableQ6 > playerData[playerNumber][7]:
+        playerData[playerNumber][7] = variableQ6
+
+    if variableQ7 > playerData[playerNumber][11]:
+        playerData[playerNumber][11] = variableQ7
+
+    if variableQ8 > playerData[playerNumber][12]:
+        playerData[playerNumber][12] = variableQ8
+
+    if variableQ9 > playerData[playerNumber][13]:
+        playerData[playerNumber][13] = variableQ9
+
+    if variableQ0 > playerData[playerNumber][14]:
+        playerData[playerNumber][14] = variableQ0
+
+    if variableQB > playerData[playerNumber][16]:
+        playerData[playerNumber][16] = variableQB
+
+    if variableQC > playerData[playerNumber][18]:
+        playerData[playerNumber][18] = variableQC
+
+    playerData[playerNumber][15] = 10 * playerData[playerNumber][18] + safeRandInt(1, 10 * playerData[playerNumber][18])
+    variableIQ = 0
+
+    while (playerData[playerNumber][15] / variableQ2 > playerData[playerNumber][13] * .01 + .05):
+        playerData[playerNumber][15] = playerData[playerNumber][15] / 2
+
+    playerData[playerNumber][19] = variableQD
+    CheckForTitles(playerNumber)
+    sleep(4)
+
+
+    variableQ = safeRandInt(1, numberOfHumanPlayers)
+    while playerData[variableQ][0] != 0:
+        variableQ = safeRandInt(1, numberOfHumanPlayers)
+
+    if playerData[playerNumber][5] < 1:
+        doAIAttack(playerNumber)
+
+
+    while True:
+        variableQR = random() * playerData[variableQ][5]
+        if variableQR * playerData[variableQ][6] < playerData[playerNumber][4]:
+            playerData[variableQ][4] = playerData[variableQ][4] + int(variableQR * playerData[variableQ][6] * 90) / 100
+            playerData[variableQ][5] = playerData[variableQ][5] - variableQR
+            doAIAttack(playerNumber)
+            break
+        else:
+            if safeRandInt(1, 9) <= 3:
+                doAIAttack(playerNumber)
+                break
+
+def doAIAttack(playerNumber):
+    if safeRandInt(1, 9) < 2:
+        return
+
+    if currentYear < 3:
+        variableI = 0
+
+        if barbarianLands < 0:
+            return
+        else:
+            variableQF = 1
+            variableI1 = safeRandInt(1, playerData[playerNumber][15])
+            #TODO: Jump into attack here
+            variableQF = 0
+            variableIQ = variableIQ + 1
+
+            if playerData[playerNumber][15] > 30 and variableIQ < playerData[playerNumber][18] / 4:
+                doAIAttack(playerNumber)
+
+                                     
+
+
+
+
+
+
+
+
+
+
 
     
 
-
-
-    
 
 
 
@@ -207,6 +311,7 @@ def CheckForTitles(playerNumber):
         exit()
 
     # In the original code, there is a check here for QF = 1, which either results in a sleep, or a full return (which ends the players turn)
+    # QF = 1 is set for the AI turns, so humans have a change to see it most likely.
 
 def DoHumanTurn(playerNumber, weather):
     CheckForPlague(playerNumber)
@@ -244,9 +349,134 @@ def DoHumanTurn(playerNumber, weather):
     
     playerData[playerNumber][2] = playerData[playerNumber][2] + grainHarvest
 
-    starvationDeaths = DoMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
+    starvationDeaths, immigrations = DoMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
     CheckForHumanPlayerRandomDeath(playerNumber, starvationDeaths)
+
+    DoTaxesAndInvestments(playerNumber, grainHarvest, immigrations, weather)
     # TODO: Continue turn with Taxes and Investments! (line 189 from the original code)
+
+def DoTaxesAndInvestments(playerNumber, grainHarvest, immigrations, weather):
+    # [ is apparently the power operator in TRS80 basic X[.9 means x to the power of .9
+ 
+    # marketProfit = (numMarkets * ((numMerchants + RND(35) + RND(35)) / (salesTax + 1) * 12 + 5)) [ .9
+    marketProfit = (playerData[playerNumber][11] * ((playerData[playerNumber][7] + safeRandInt(1, 35) + safeRandInt(1, 35)) / (playerData[playerNumber][9] + 1) * 12 + 5)) ** .9
+    
+    # millProfit = (numMills * (5.8 * (harvest + RND(250)) / (incomeTax * 20 + salesTax * 40 + 10) + 150)) [ .9
+    millProfit = (playerData[playerNumber][12] * (5.8 * (grainHarvest + safeRandInt(1, 250)) / (playerData[playerNumber][10] * 20 + playerData[playerNumber][9] * 40 + 10) + 150)) ** .9
+
+    # foundryProfit = (numFoundry * (numSoldiers + RND(150) + 400)) [ .9
+    foundryProfit = (playerData[playerNumber][13] * (playerData[playerNumber][15] + safeRandInt(1, 150) + 400)) ** .9
+
+    # shipyardProfit = (numShipyard * (numMerchants * 4 + numMarkets * 9 + numFoundry * 15) * weather) [ .9
+    shipyardProfit = (playerData[playerNumber][14] * (playerData[playerNumber][7] * 4 + playerData[playerNumber][11] * 9 + playerData[playerNumber][13] * 15) * weather) ** .9
+
+    # soldierCost = numSoldiers * (-8)
+    soldierCost = playerData[playerNumber][15] * -8
+
+    # customsCollected = immigrations * (RND(40) + RND(40)) / 100 * customsTax
+    customsCollected = immigrations * (safeRandInt(1, 40) + safeRandInt(1, 40)) / 100 * playerData[playerNumber][8]
+
+    # salesCollected = salesTax / 100 * ((numMerchants * 1.8 + marketProfit * 33 + millProfit * 17 + foundryProfit * 50 + shipyardProfit * 70) [ .85 + numMobles * 5 + numSerfs)
+    salesCollected = playerData[playerNumber][9] / 100 * ((playerData[playerNumber][7] * 1.8 + marketProfit * 33 + millProfit * 17 + foundryProfit * 50 + shipyardProfit * 70) ** .85 + playerData[playerNumber][18] * 5 + playerData[playerNumber][3])
+
+    # incomeCollected = (incomeTax / 100 * (numSerfs * 1.3 + numNobles * 145 + numMerchants * 39 + numMarkets * 99 + numMills * 99 + numFoundry * 425 + numShipyards * 965)) [ .97
+    incomeCollected = (playerData[playerNumber][10] / 100 * (playerData[playerNumber][3] * 1.3 + playerData[playerNumber][18] * 145 + playerData[playerNumber][7] * 39 + playerData[playerNumber][11] * 99 + playerData[playerNumber][12] * 99 + playerData[playerNumber][13] * 425 + playerData[playerNumber][14] * 965)) ** .97
+    
+    # treasury = treasury + marketProfit + millProfit + foundryProfit + shipyardProfit + soldierCost + customsCollected + salesCollected + incomeCollected
+    playerData[playerNumber][4] = playerData[playerNumber][4] + marketProfit + millProfit + foundryProfit + shipyardProfit + soldierCost + customsCollected + salesCollected + incomeCollected
+    playerData[playerNumber][18] = int(playerData[playerNumber][18])
+
+    exitTaxes = False
+    while exitTaxes != True:
+        exitTaxes, menuItemSelected = TaxesInternal(playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost)
+        # TODO: This is where I should be handling the tax changes
+
+    exitInvestments = False
+    while exitInvestments != True:
+        exitInvestments, menuItemSelected = InvestmentsInternal(playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost)
+        # TODO: This is where I should be handling the Investment options
+
+
+def TaxesInternal(playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost):
+    exitTaxes = False
+    menuItemSelected = 0
+    while (menuItemSelected < 1 or menuItemSelected > 3) and exitTaxes == False:
+        ClearScreen()
+        PrintTaxesAndInvestments(playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost)
+        menuItem = input('1) Customs duty  2) Sales tax  3) Income tax? ')
+        try:
+            menuItemSelected = int(menuItem)
+        except ValueError:
+            exitTaxes = True
+
+    return exitTaxes, menuItemSelected
+
+def InvestmentsInternal(playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost):
+    exitInvestments = False
+    menuItemSelected = 0
+    while (menuItemSelected < 1 or menuItemSelected > 6) and exitInvestments == False:
+        ClearScreen()
+        PrintTaxesAndInvestments(playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost)
+        menuItem = input('Any new investments (give #)? ')
+        try:
+            menuItemSelected = int(menuItem)
+        except ValueError:
+            exitInvestments = True
+
+    return exitInvestments, menuItemSelected
+
+
+
+
+def PrintTaxesAndInvestments(playerNumber,
+                             customsCollected,
+                             salesCollected,
+                             incomeCollected,
+                             marketProfit,
+                             millProfit,
+                             foundryProfit,
+                             shipyardProfit,
+                             soldierCost):
+    print('State revenues:    Treasury={0:7,d} {1}'.format(int(playerData[playerNumber][4]), players[playerNumber][6]))
+    print('Customs duty    Sales tax       Income tax')
+    print(' {0} %            {1} %              {2} %'.format(int(playerData[playerNumber][8]), int(playerData[playerNumber][9]), int(playerData[playerNumber][10])))
+    print(' {0}             {1}             {2}'.format(int(customsCollected + .5), int(salesCollected + .5), int(incomeCollected + .5)))
+    print('\nInvestments     Number           Profits           Cost')
+    print('1) Marketplaces  {0}                {1}                1000'.format(playerData[playerNumber][11], int(marketProfit)))
+    print('2) Grain mills   {0}                {1}                2000'.format(playerData[playerNumber][12], int(millProfit)))
+    print('3) Foundries     {0}                {1}                7000'.format(playerData[playerNumber][13], int(foundryProfit)))
+    print('4) Shipyards     {0}                {1}                8000'.format(playerData[playerNumber][14], int(shipyardProfit)))
+    print('5) Soldiers      {0}              {1}              8'.format(playerData[playerNumber][15], soldierCost))
+    print('6) Palace        {0}% Completed                      5000\n\n'.format(playerData[playerNumber][16] * 10))
+    #TODO: Fix the number padding on the above table so it looks right with various values
+
+    #TODO Figure out what this KL variable eval code is for?
+    #if variableKL == 1:
+    #    variableKL = 0
+    #    return
+
+
+
+
+def DoMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands):
+    exitMarket = False
+    while exitMarket != True:
+        exitMarket, menuItemSelected = MarketInternal(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
+        # TODO: This is where I should be handling the market menu items (buy/sell grain/land)
+    
+    armyShare = DoArmyGrainShare(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
+    peopleShare = DoPeopleGrainShare(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands, armyShare)
+
+    playerData[playerNumber][2] = playerData[playerNumber][2] - armyShare - peopleShare
+
+    # Calculate the effectiveness of the soldiers
+    playerData[playerNumber][19] = armyShare / (armyGrainDemands + 0.001) * 10
+    if playerData[playerNumber][19] < 5:
+        playerData[playerNumber][19] = 5
+    if playerData[playerNumber][19] > 15:
+        playerData[playerNumber][19] = 15
+
+    return DoEndOfYear(playerNumber, peopleShare, peopleGrainDemands, armyShare, armyGrainDemands)
 
 
 def PrintMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands):
@@ -328,25 +558,7 @@ def DoPeopleGrainShare(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, 
 
 
 
-def DoMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands):
-    exitMarket = False
-    while exitMarket != True:
-        exitMarket, menuItemSelected = MarketInternal(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
-        # TODO: This is where I should be handling the market menu items (buy/sell grain/land)
-    
-    armyShare = DoArmyGrainShare(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
-    peopleShare = DoPeopleGrainShare(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands, armyShare)
 
-    playerData[playerNumber][2] = playerData[playerNumber][2] - armyShare - peopleShare
-
-    # Calculate the effectiveness of the soldiers
-    playerData[playerNumber][19] = armyShare / (armyGrainDemands + 0.001) * 10
-    if playerData[playerNumber][19] < 5:
-        playerData[playerNumber][19] = 5
-    if playerData[playerNumber][19] > 15:
-        playerData[playerNumber][19] = 15
-
-    return DoEndOfYear(playerNumber, peopleShare, peopleGrainDemands, armyShare, armyGrainDemands)
 
 def DoEndOfYear(playerNumber, peopleShare, peopleGrainDemands, armyShare, armyDemands):
     people = playerData[playerNumber][3] + playerData[playerNumber][7] + playerData[playerNumber][18]
@@ -388,7 +600,7 @@ def DoEndOfYear(playerNumber, peopleShare, peopleGrainDemands, armyShare, armyDe
 
     PrintMarketSummary(playerNumber, births, deaths, immigrations, malnutritionDeaths, starvationDeaths, armyStarvation, populationChange)
     sleep(4)
-    return starvationDeaths
+    return starvationDeaths, immigrations
             
 def PrintMarketSummary(playerNumber, births, deaths, immigrations, malnutritionDeaths, starvationDeaths, armyStarvation, populationChange):
     ClearScreen()
@@ -462,7 +674,7 @@ def MainLoop():
     for playerNumber in range(0, 6):
         variableQF = 0
         if playerNumber >= numberOfHumanPlayers:
-            DoAITurn(playerNumber)
+            DoAITurn(playerNumber, weather)
         else:
             DoHumanTurn(playerNumber, weather)
 
