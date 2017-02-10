@@ -21,8 +21,6 @@ randDeathStrings = [
 ]
 
 def safeRandInt(lower, upper):
-
-
     if lower >= upper:
         return upper
     return randint(lower, upper)
@@ -49,7 +47,7 @@ def safeRandInt(lower, upper):
 # 18 is number of nobles
 # 19 is how well the army fights between 5 (at 50%) and 15 (at 150%)
 playerData = [
-    #[0,     1,                         2,    3,    4, 5, 6,  7,  8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+    #[0,    1,                             2,    3,    4, 5, 6,  7,  8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
     [0, 10000, 15000 + safeRandInt(1, 10000), 2000, 1000, 0, 0, 25, 20, 5, 35,  0,  0,  0,  0, 20,  0,  2,  1, 15],
     [0, 10000, 15000 + safeRandInt(1, 10000), 2000, 1000, 0, 0, 25, 20, 5, 35,  0,  0,  0,  0, 20,  0,  2,  1, 15],
     [0, 10000, 15000 + safeRandInt(1, 10000), 2000, 1000, 0, 0, 25, 20, 5, 35,  0,  0,  0,  0, 20,  0,  2,  1, 15],
@@ -66,9 +64,6 @@ variableZ = ""
 #Suspect this is how much land the barbarians have...
 barbarianLands = 6000
 
-#This is the variable to determine if the game is over (someone has won)
-variableKK = 0
-
 def GetFullPlayerName(playerNumber):
     return "{0} {1} of {2}".format(players[playerNumber][playerData[playerNumber][17]], players[playerNumber][0], players[playerNumber][1])
 
@@ -81,19 +76,19 @@ def CheckForPlague(playerNumber):
         print("Black death has struck your nation.");
         
         serfs = safeRandInt(0, (playerData[playerNumber][3]) / 2)
-        (variableA[playerNumber][3]) = (playerData[playerNumber][3]) - serfs
+        (playerData[playerNumber][3]) = (playerData[playerNumber][3]) - serfs
         print("{0} serfs died.".format(serfs));
 
         merchants = safeRandInt(0, (playerData[playerNumber][7]) / 3)
-        (variableA[playerNumber][7]) = (playerData[playerNumber][7]) - merchants
+        (playerData[playerNumber][7]) = (playerData[playerNumber][7]) - merchants
         print("{0} merchants died.".format(merchants));
 
         soldiers = safeRandInt(0, (playerData[playerNumber][15]) / 3)
-        (variableA[playerNumber][15]) = (playerData[playerNumber][15]) - soldiers
+        (playerData[playerNumber][15]) = (playerData[playerNumber][15]) - soldiers
         print("{0} soldiers died.".format(soldiers));
         
         nobles = safeRandInt(0, (playerData[playerNumber][18]) / 3)
-        (variableA[playerNumber][18]) = (playerData[playerNumber][18]) - nobles
+        (playerData[playerNumber][18]) = (playerData[playerNumber][18]) - nobles
         print("{0} nobles died.".format(soldiers));
 
         sleep(8)
@@ -265,17 +260,6 @@ def doAIAttack(playerNumber):
 
 
 
-
-
-
-
-
-
-    
-
-
-
-
 # Original code 359 - 369
 def CheckForTitles(playerNumber):
     # Check for the "prince" title
@@ -307,7 +291,6 @@ def CheckForTitles(playerNumber):
         print("Game over . . .")
         print("{0} Wins !\n\n".format(GetFullPlayerName(playerNumber)))
         PrintYearSummary()
-        # In the original code, KK is set to 1 here (KK = 1)
         exit()
 
     # In the original code, there is a check here for QF = 1, which either results in a sleep, or a full return (which ends the players turn)
@@ -355,6 +338,127 @@ def DoHumanTurn(playerNumber, weather):
     DoTaxesAndInvestments(playerNumber, grainHarvest, immigrations, weather)
     # TODO: Continue turn with Taxes and Investments! (line 189 from the original code)
 
+    DoAttacks(playerNumber)
+
+def PrintAttacks():
+    print('Land holdings:\n')
+    print('1)  Barbarians\t{0}'.format(barbarianLands))
+
+    for i in range(1, 6):
+        if playerData[i][0] == 0:
+            print('{0})  {1}\t{2}'.format(i + 1, players[i][1], playerData[i][1]))
+
+
+def DoAttacks(playerNumber):
+    global barbarianLands
+
+    attacksSoFar = 0
+    attacksPerTurn = playerData[playerNumber][18] / 4 + 1
+
+    while True:
+        ClearScreen()
+        PrintAttacks()
+
+        attackInput = input('Who do you wish to attack (give #)? ')
+        try:
+            attack = int(attackInput)
+            if attack < 0 or attack > 7:
+                continue
+
+            if attack == playerNumber + 1:
+                print('{0}, Please think again.  You are #{1}!'.format(players[playerNumber][playerData[playerNumber][17]], attack))
+                sleep(4)
+                continue
+
+            if attack > 1 and currentYear < 3:
+                print('Due to international treaty, you cannot attack other\nnations until the third year.')
+                sleep(4)
+                continue
+
+            if attack == 1 and barbarianLands < 1:
+                print('All barbarian lands have been seized')
+                sleep(4)
+                continue
+
+            if attack != 0 and playerData[attack - 1][0] != 0:
+                print('That player is no longer in the game')
+                sleep(4)
+                continue
+
+            if attack == 0:
+                return
+
+            if attacksSoFar > attacksPerTurn:
+                print('Due to a shortage of nobles , you are limited to only\n{0} attacks per year'.format(attacksPerTurn))
+                sleep(4)
+                continue
+
+            while True:
+                ClearScreen()
+                PrintAttacks()
+    
+                soldiersInput = input('How many soldiers do you wish to send? ')
+
+                try:
+                    soldiers = int(soldiersInput)
+
+                    if soldiers < 1:
+                        break
+
+                    if soldiers > playerData[playerNumber][15]:
+                        print('Think again... You have only {0} soldiers'.format(playerData[playerNumber][15]))
+                        sleep(4)
+                        continue
+
+                    Attack(playerNumber, attack - 1, soldiers)
+                    attacksSoFar += 1
+                    break
+
+                except ValueError:
+                    continue
+
+
+        except ValueError:
+            break
+            
+
+
+
+
+
+
+# 279 IQ = IQ + 1 :
+#     CLS : 
+#     PRINT@269,Z(K,A(K,17));" ";Z(K,0);" of ";Z(K,1);":" : 
+#     PRINT@169,"Soldiers remaining:";:
+#     I4 = A(K,19)
+#     I5 = 0 
+#     I2 = A(I,15)
+#     I0 = A(I,1)
+#     O1 = 75 - I1 - I2
+#     A(K,15) = A(K,15) - I1
+
+def PrintAttackInternal(aggressor, defender, soldiers):
+    print('                                        Soldiers remaining:')
+    print('             {0} :'.format(GetFullPlayerName(aggressor)))
+
+def Attack(aggressor, defender, soldiers):
+
+    variableI4 = playerData[aggressor][19]
+    variableI5 = 0
+    variableI2 = playerData[defender][15]
+    variableI0 = playerData[defender][1]
+    variableO1 = 75 - variableI1 - variableI2
+    playerData[aggressor][15] = playerData[aggressor][15] - variableI1
+
+
+    
+
+
+    pass
+
+
+
 def DoTaxesAndInvestments(playerNumber, grainHarvest, immigrations, weather):
     # [ is apparently the power operator in TRS80 basic X[.9 means x to the power of .9
  
@@ -387,15 +491,46 @@ def DoTaxesAndInvestments(playerNumber, grainHarvest, immigrations, weather):
     playerData[playerNumber][18] = int(playerData[playerNumber][18])
 
     exitTaxes = False
-    while exitTaxes != True:
+    while True:
         exitTaxes, menuItemSelected = TaxesInternal(playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost)
-        # TODO: This is where I should be handling the tax changes
+        if exitTaxes == True:
+            break
+        SetTax(menuItemSelected, playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost)
+        del menuItemSelected
 
     exitInvestments = False
-    while exitInvestments != True:
+    while  True:
         exitInvestments, menuItemSelected = InvestmentsInternal(playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost)
-        # TODO: This is where I should be handling the Investment options
+        if exitInvestments == True:
+            break
+        SetInvestment(menuItemSelected, playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost)
+        del menuItemSelected
 
+
+def SetInvestment(taxIndex, playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost):
+    pass
+
+
+taxType = [
+    ['Give new customs tax (max=50%)? ', 50],
+    ['Give new sales tax (max=20%)? ', 20],
+    ['Give new income tax (max=35%)? ', 35]
+]
+
+def SetTax(taxIndex, playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost):
+    while True:
+        ClearScreen()
+        PrintTaxesAndInvestments(playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost)
+        taxInput = input(taxType[taxIndex - 1][0])
+
+        try:
+            tax = float(taxInput)
+            if tax < 0 or tax > taxType[taxIndex - 1][1]:
+                continue
+            playerData[playerNumber][taxIndex + 7] = tax
+            break
+        except ValueError:
+            pass        
 
 def TaxesInternal(playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost):
     exitTaxes = False
@@ -456,13 +591,115 @@ def PrintTaxesAndInvestments(playerNumber,
     #    return
 
 
+def BuyGrain(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands):
+    #countrySelected = 0
+    #while True:
+    #    ClearScreen()
+    #    PrintMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
+    #    country = input('From which country  (give #)? ')
+    #    try:
+    #        countrySelected = int(country)
+    #        if country < 1 or country > 6:
+    #            countinue
 
+    #        if playerData[country][0] == 1 or playerData[country][5] == 0:
+    #            print('That country has none for sale!')
+    #            sleep(4)
+    #            return
+
+    #        if country == playerNumber:
+    #            print('You cannot buy grain that you have put onto the market!')
+    #            sleep(4)
+    #            return
+
+    #        break
+    #    except ValueError:
+    #        return
+    pass
+
+def SellGrain(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands):
+    while True:
+        ClearScreen()
+        PrintMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
+        bushelsInput = input('How many bushels do you wish to sell? ')
+        try:
+            bushels = int(bushelsInput)
+
+            if bushels > playerData[playerNumber][2]:
+                ClearScreen()
+                PrintMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
+                print('{0} {1}, please think again'.format(players[playerNumber][playerData[playerNumber][17]], playerData[playerNumber][0]))
+                print('You only have {0} bushels.'.format(playerData[playerNumber][2]))
+                sleep(4)
+                continue
+
+            if bushels < 0:
+                continue
+
+            while True:
+                ClearScreen()
+                PrintMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
+                priceInput = input('What will be the price per bushel? ')
+                try:
+                    price = int(priceInput)
+                    if price <= 0:
+                        continue
+                    if price > 15:
+                        print('Be reasonable . . .even gold costs less than that!')
+                        sleep(4)
+                        continue
+
+                    playerData[playerNumber][6] = (playerData[playerNumber][6] * playerData[playerNumber][5] + bushels * price) / (playerData[playerNumber][5] + bushels)
+                    playerData[playerNumber][5] = playerData[playerNumber][5] + bushels
+                    playerData[playerNumber][2] = playerData[playerNumber][2] - bushels
+                    break
+                except ValueError:
+                    break
+            break
+        except ValueError:
+            pass
+
+
+def SellLand(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands):
+    global barbarianLands
+
+    while True:
+        ClearScreen()
+        PrintMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
+        print('The barbarians will give you 2 {0} per acre'.format(players[playerNumber][6]))
+        sleep(4)
+        ClearScreen()
+        PrintMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
+        acresInput = input('How many acres will you sell them? ')
+        try:
+            acres = int(acresInput)
+            if acres > playerData[playerNumber][1] * .95:
+                print('You must keep some land for the royal palace!')
+                sleep(4)
+                continue
+            if acres < 0:
+                continue
+
+            playerData[playerNumber][4] = playerData[playerNumber][4] + (acres * 2)
+            playerData[playerNumber][1] = playerData[playerNumber][1] - acres
+            barbarianLands = barbarianLands + acres
+            break
+        except ValueError:
+            pass
+
+marketMenu = {1 : BuyGrain,
+              2 : SellGrain,
+              3 : SellLand}
 
 def DoMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands):
     exitMarket = False
-    while exitMarket != True:
+    while True:
         exitMarket, menuItemSelected = MarketInternal(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
-        # TODO: This is where I should be handling the market menu items (buy/sell grain/land)
+        if exitMarket == True:
+            break
+
+        marketMenu[menuItemSelected](playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
+        menuItemSelected = 0
     
     armyShare = DoArmyGrainShare(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
     peopleShare = DoPeopleGrainShare(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands, armyShare)
@@ -487,14 +724,14 @@ def PrintMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGra
     print("{0:7,d}   {1:7,d}   {2:7,d}    {3:7,d}    {4:7,d}".format(int(grainHarvest), int(playerData[playerNumber][2]), int(peopleGrainDemands), int(armyGrainDemands), int(playerData[playerNumber][4])))
     print("bushels   bushels   bushels    bushels    {0}".format(players[playerNumber][6]))
     print("------Grain for sale:")
-    print("\t\tCountry\tBushels\tPrice")
+    print("\t\tCountry\t\tBushels\t\tPrice")
 
     grainForSale = False
 
     for i in range(0, 6):
         if (playerData[i][0] == 0 and playerData[i][5] > 0):
             grainForSale = True
-            print("{0}\t\t{1}\t{2}\t{3}".format(i + 1, players[i][1], playerData[i][5], playerData[i][6]))
+            print("{0}\t\t{1}\t{2}\t\t{3}".format(i + 1, players[i][1], playerData[i][5], playerData[i][6]))
 
     if grainForSale == False:
         print("\n\n\nNo grain for sale . . .\n")
