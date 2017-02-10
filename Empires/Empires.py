@@ -438,9 +438,14 @@ def DoAttacks(playerNumber):
 #     O1 = 75 - I1 - I2
 #     A(K,15) = A(K,15) - I1
 
-def PrintAttackInternal(aggressor, defender, soldiers):
-    print('                                        Soldiers remaining:')
-    print('             {0} :'.format(GetFullPlayerName(aggressor)))
+def PrintAttackInternal(aggressor, defender, aggressorSoldiers, defenderSoldiers):
+    print('\n\n                                        Soldiers remaining:')
+    print('\n             {0}:\t{1}'.format(GetFullPlayerName(aggressor), aggressorSoldiers))
+
+    if defender == 0:
+        print('             Pagan barbarians:\t{1}'.format(defenderSoldiers))
+    else:
+        print('             {0}:\t{1}'.format(GetFullPlayerName(defender), defenderSoldiers))
 
 def Attack(aggressor, defender, soldiers):
 
@@ -454,6 +459,18 @@ def Attack(aggressor, defender, soldiers):
 
     
 
+
+    pass
+
+
+def BattleOver(victory, playerNumber):
+    ClearScreen()
+    print('\n                       Battle over\n')
+
+    if victory == True:
+        print('The forces of {0} {1} were victorious.'.format(players[playerNumber][playerData[playerNumber][17]], players[playerNumber][0]))
+    else:
+        print('{0} {1} was defeated.'.format(players[playerNumber][playerData[playerNumber][17]], players[playerNumber][0]))
 
     pass
 
@@ -592,30 +609,69 @@ def PrintTaxesAndInvestments(playerNumber,
 
 
 def BuyGrain(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands):
-    #countrySelected = 0
-    #while True:
-    #    ClearScreen()
-    #    PrintMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
-    #    country = input('From which country  (give #)? ')
-    #    try:
-    #        countrySelected = int(country)
-    #        if country < 1 or country > 6:
-    #            countinue
+    while True:
+        ClearScreen()
+        PrintMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
+        countryInput = input('From which country  (give #)? ')
+        try:
+            country = int(countryInput)
+            if country == 0:
+                return
 
-    #        if playerData[country][0] == 1 or playerData[country][5] == 0:
-    #            print('That country has none for sale!')
-    #            sleep(4)
-    #            return
+            if country < 1 or country > 6:
+                continue
 
-    #        if country == playerNumber:
-    #            print('You cannot buy grain that you have put onto the market!')
-    #            sleep(4)
-    #            return
+            if playerData[country][0] == 1 or playerData[country][5] == 0:
+                ClearScreen()
+                PrintMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
+                print('That country has none for sale!')
+                sleep(4)
+                return
 
-    #        break
-    #    except ValueError:
-    #        return
-    pass
+            if country == playerNumber:
+                ClearScreen()
+                PrintMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
+                print('You cannot buy grain that you have put onto the market!')
+                sleep(4)
+                continue
+
+            while True:
+                ClearScreen()
+                PrintMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
+                bushelsInput = input('How many bushels? ')
+                try:
+                    bushels = int(bushelsInput)
+                    if bushels > playerData[country][5]:
+                        ClearScreen()
+                        PrintMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
+                        print('You can\'t buy more grain then they are selling!')
+                        sleep(4)
+                        continue
+
+                    if bushels < 0:
+                        break
+
+                    cost = bushels * playerData[country][6] / .9
+                    if cost > playerData[playerNumber][4]:
+                        ClearScreen()
+                        PrintMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
+                        print('{0} {1} please reconsider -'.format(players[playerNumber][playerData[playerNumber][17]], playerData[playerNumber][0]))
+                        print('You can only afford to buy {0} bushels'.format(playerData[playerNumber][4] * .9 / playerData[country][6]))
+                        sleep(4)
+                        continue
+
+                    playerData[playerNumber][2] = playerData[playerNumber][2] + bushels
+                    playerData[playerNumber][4] = playerData[playerNumber][4] - cost
+                    playerData[country][4] = playerData[country][4] + cost * 0.9
+                    playerData[country][5] = playerData[country][5] - bushels
+                    return
+
+                except ValueError:
+                    pass
+
+        except ValueError:
+            pass
+
 
 def SellGrain(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands):
     while True:
