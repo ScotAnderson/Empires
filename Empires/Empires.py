@@ -249,7 +249,7 @@ def doAIAttack(playerNumber):
             variableI1 = safeRandInt(1, playerData[playerNumber][15])
             #TODO: Jump into attack here
             variableQF = 0
-            variableIQ = variableIQ + 1
+            #variableIQ = variableIQ + 1
 
             if playerData[playerNumber][15] > 30 and variableIQ < playerData[playerNumber][18] / 4:
                 doAIAttack(playerNumber)
@@ -524,8 +524,83 @@ def DoTaxesAndInvestments(playerNumber, grainHarvest, immigrations, weather):
         del menuItemSelected
 
 
+investmentType = [
+    [1000],
+    [2000],
+    [7000],
+    [8000],
+    [8],
+    [5000]
+]
+
 def SetInvestment(taxIndex, playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost):
-    pass
+    variableJ = 0
+    variableH = 0
+    
+
+    cost = investmentType[taxIndex - 1][0]
+    if taxIndex == 1:
+        variableJ = safeRandInt(1, 7)
+    if taxIndex == 6:
+        variableH = safeRandInt(1, 4)
+
+    while True:
+        ClearScreen()
+        PrintTaxesAndInvestments(playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost)
+        amountInput = input('How many? ')
+        try:
+            amount = int(amountInput)
+            if amount < 0:
+                continue
+
+            if amount == 0:
+                return
+
+            if playerData[playerNumber][4] < cost * amount:
+                ClearScreen()
+                PrintTaxesAndInvestments(playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost)
+                print('Think again . . .You only have {0} {1}'.format(playerData[playerNumber][4], players[playerNumber][6]))
+                sleep(4)
+                continue
+
+            if amount + (amount - 1) * (variableJ + variableH) > playerData[playerNumber][3]:
+                ClearScreen()
+                PrintTaxesAndInvestments(playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost)
+                print('You don\'t have enough serfs to train')
+                sleep(4)
+                continue
+
+            if cost == 8:
+                people = playerData[playerNumber][3] + playerData[playerNumber][7] + playerData[playerNumber][18]
+                if (amount + playerData[playerNumber][15]) / people > .05 + playerData[playerNumber][13] * .015:
+                    ClearScreen()
+                    PrintTaxesAndInvestments(playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost)
+                    print('You cannot equip and maintain so many troops, {0}.'.format(players[playerNumber][playerData[playerNumber][17]]))
+                    sleep(4)
+                    continue
+
+            playerData[playerNumber][15] = int(playerData[playerNumber][15])
+
+            if cost == 8 and amount + playerData[playerNumber][15] > playerData[playerNumber][18] * 20:
+                ClearScreen()
+                PrintTaxesAndInvestments(playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost)
+                print('Please think again . . . You only have {0} nobles\nto lead your troops.'.format(int(playerData[playerNumber][18] + .5)))
+                continue
+
+            if cost == 8:
+                playerData[playerNumber][3] = playerData[playerNumber][3] - amount
+            else:
+                playerData[playerNumber][7] = playerData[playerNumber][7] + variableJ * amount
+                playerData[playerNumber][18] = playerData[playerNumber][18] + variableH * amount
+                playerData[playerNumber][3] = playerData[playerNumber][3] - (variableJ + variableH) * amount
+
+            playerData[playerNumber][4] = playerData[playerNumber][4] - amount * cost
+            playerData[playerNumber][10 + taxIndex] = playerData[playerNumber][10 + taxIndex] + amount
+            variableKL = 1
+            return
+
+        except ValueError:
+            continue
 
 
 taxType = [
