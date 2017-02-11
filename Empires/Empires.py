@@ -422,22 +422,6 @@ def DoAttacks(playerNumber):
             break
             
 
-
-
-
-
-
-# 279 IQ = IQ + 1 :
-#     CLS : 
-#     PRINT@269,Z(K,A(K,17));" ";Z(K,0);" of ";Z(K,1);":" : 
-#     PRINT@169,"Soldiers remaining:";:
-#     I4 = A(K,19)
-#     I5 = 0 
-#     I2 = A(I,15)
-#     I0 = A(I,1)
-#     O1 = 75 - I1 - I2
-#     A(K,15) = A(K,15) - I1
-
 def PrintAttackInternal(aggressor, defender, aggressorSoldiers, defenderSoldiers):
     print('\n\n                                        Soldiers remaining:')
     print('\n             {0}:\t{1}'.format(GetFullPlayerName(aggressor), aggressorSoldiers))
@@ -447,14 +431,99 @@ def PrintAttackInternal(aggressor, defender, aggressorSoldiers, defenderSoldiers
     else:
         print('             {0}:\t{1}'.format(GetFullPlayerName(defender), defenderSoldiers))
 
-def Attack(aggressor, defender, soldiers):
-    variableI4 = playerData[aggressor][19]
-    variableI5 = 0
-    variableI2 = playerData[defender][15]
-    variableI0 = playerData[defender][1]
-    variableO1 = 75 - variableI1 - variableI2
-    playerData[aggressor][15] = playerData[aggressor][15] - variableI1
-    pass
+
+    #     PRINT@269,Z(K,A(K,17));" ";Z(K,0);" of ";Z(K,1);":"
+    #     PRINT@169,"Soldiers remaining:";
+    #     PRINT@333,Z(I,A(I,17));" ";Z(I,0);" of ";Z(I,1);":"
+    #     PRINT@512,Z(I,1);"'s serfs are forced to defend their country!"
+    #     PRINT@306,CHR$(30);:PRINT@306,INT(I1);:PRINT@370,CHR$(30);:PRINT@370,INT(I2);:
+
+
+
+# I0 == defenders available land
+# I1 == attacking soldiers
+# I2 == defending soldiers
+# I3 == defending soldier strength
+# I4 == attackers soldier strength
+# I5 == lands seized
+# IH == flag for if serfs are defending?
+# O1 == how long to take per tick, to keep combat from being too fast for low numbers of soldiers?
+# I7 == how many soldiers to lose per tick?
+    
+
+def Attack(aggressor, defender, aggressorSoldiers, aiTurn):
+    aggressorSoldierStrength = playerData[aggressor][19]
+    landsSeized = 0
+    defenderSoldiers = playerData[defender][15]
+    defenderLands = playerData[defender][1]
+    variableO1 = 75 - aggressorSoldiers - defenderSoldiers
+    playerData[aggressor][15] = playerData[aggressor][15] - aggressorSoldiers
+
+    if defender == 0:
+        defenderSoldiers = safeRandInt(1, safeRandInt(1, aggressorSoldiers * 3)) + safeRandInt(1, safeRandInt(1, aggressorSoldiers * 1.5))
+        defenderSoldierStrength = 9
+        defenderLands = barbarianLands
+        variableO1 = 75 - aggressorSoldiers - defenderSoldiers
+        
+    else:
+        defenderSoldierStrength = playerData[defender][19]
+        
+        variableIH = 0
+        if playerData[defender][15] < 1:
+            defenderSoldiers = playerData[defender][3]
+            defenderSoldierStrength = 5
+            variableIH = 1
+            variableO1 = -1
+
+    # FORO=0TOO1:NEXT
+    while True:
+        variableI7 = int(aggressorSoldiers / 15) + 1
+        if safeRandInt(1, aggressorSoldierStrength) < safeRandInt(1, defenderSoldierStrength):
+            aggressorSoldiers = aggressorSoldiers - variableI7
+            if defenderLands - landsSeized < 0:
+                BattleOver2(aggressor, defender, landsSeized, aggressorSoldiers, aiTurn)
+                return        
+        else:
+            landsSeized = landsSeized + safeRandInt(1, variableI7 * 26) - safeRandInt(1, variableI7 + 5)
+            defenderSoldiers = defenderSoldiers - variableI7
+            if landsSeized < 0:
+                landsSeized = 0
+
+        if aggressorSoldiers > 0 and defenderSoldiers > 0:
+            continue
+
+        if aggressorSoldiers < 0:
+            aggressorSoldiers = 0
+
+        if defenderSoldiers < 0:
+            defenderSoliders = 0
+
+        if variableIH == 1 and aggressorSoldiers > 0:
+            BattleOver2(aggressor, defender, landsSeized, aggressorSoldiers, aiTurn)
+            return
+
+        BattleOver1(aggressor, defender, landsSeized, aggressorSoldiers, aiTurn)
+        return
+    
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+    ClearScreen()
+    PrintAttackInternal(aggressor, defender, aggressorSoldiers, defenderSoldiers)
+
+
+
 
 
 def PauseOrWait(aiTurn):
@@ -477,10 +546,10 @@ def BattleOver1(playerNumber, defender, landsSeized, remainingSoldiers, aiTurn):
         print('{0} {1} was defeated.'.format(players[playerNumber][playerData[playerNumber][17]], players[playerNumber][0]))
         if landsSeized < 2:
             landsSeized = 0
+            print('{0} acres were seized'.format(landsSeized))
         else:
             landsSeized = int(landsSeized / safeRandInt(1, 3))
             print('In your defeat you nevertheless managed to capture {0} acres.'.format(landsSeized))
-
 
     if defender == 0:
         playerData[playerNumber][15] = playerData[playerNumber][15] + remainingSoldiers
@@ -529,13 +598,20 @@ def BattleOver1(playerNumber, defender, landsSeized, remainingSoldiers, aiTurn):
 
             PauseOrWait(aiTurn)
         else:
+            playerData[playerNumber][15] = playerData[playerNumber][15] + remainingSoldiers
+            playerData[playerNumber][1] = playerData[playerNumber][1] + landsSeized
 
+            if variableIH == 1:
+                variableIH = 0
+                playerNumber[defender][15] = 0
+                playerNumber[defender][3] = variableI2
+                playerNumber[defender][1] = playerNumber[defender][1] - landsSeized
+                PauseOrWait(aiTurn)
 
+            playerData[defender][15] = varaibleI2
+            playerData[defender][1] = playerData[defender][1] - landsSeized
+            PauseOrWait(aiTurn)
 
-
-
-# I1 == attacking soldiers?
-# I5 == lands seized?
 
 
 def BattleOver2(playerNumber, defender, landsSeized, remainingSoldiers, aiTurn):
