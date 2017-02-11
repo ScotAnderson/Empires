@@ -20,9 +20,8 @@ _weatherSwitcher = {
     5: "Fantastic weather! Great year!"
 }
 
-
 def PrintYear(year, weather):
-    print("Year {}".format(year))
+    print("Year {}\n".format(year))
     print(_weatherSwitcher.get(weather, "nothing"))
 
 

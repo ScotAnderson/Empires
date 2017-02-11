@@ -75,20 +75,20 @@ def CheckForPlague(playerNumber):
         print("                      P L A G U E  ! ! !");
         print("Black death has struck your nation.");
         
-        serfs = safeRandInt(0, (playerData[playerNumber][3]) / 2)
-        (playerData[playerNumber][3]) = (playerData[playerNumber][3]) - serfs
+        serfs = safeRandInt(1, int(playerData[playerNumber][3] / 2))
+        playerData[playerNumber][3] = playerData[playerNumber][3] - serfs
         print("{0} serfs died.".format(serfs));
 
-        merchants = safeRandInt(0, (playerData[playerNumber][7]) / 3)
-        (playerData[playerNumber][7]) = (playerData[playerNumber][7]) - merchants
+        merchants = safeRandInt(1, int(playerData[playerNumber][7] / 3))
+        playerData[playerNumber][7] = playerData[playerNumber][7] - merchants
         print("{0} merchants died.".format(merchants));
 
-        soldiers = safeRandInt(0, (playerData[playerNumber][15]) / 3)
-        (playerData[playerNumber][15]) = (playerData[playerNumber][15]) - soldiers
+        soldiers = safeRandInt(1, int(playerData[playerNumber][15] / 3))
+        playerData[playerNumber][15] = playerData[playerNumber][15] - soldiers
         print("{0} soldiers died.".format(soldiers));
         
-        nobles = safeRandInt(0, (playerData[playerNumber][18]) / 3)
-        (playerData[playerNumber][18]) = (playerData[playerNumber][18]) - nobles
+        nobles = safeRandInt(1, int(playerData[playerNumber][18] / 3))
+        playerData[playerNumber][18] = playerData[playerNumber][18] - nobles
         print("{0} nobles died.".format(soldiers));
 
         sleep(8)
@@ -348,12 +348,14 @@ def PrintAttacks():
         if playerData[i][0] == 0:
             print('{0})  {1}\t{2}'.format(i + 1, players[i][1], playerData[i][1]))
 
+    print('\n\n\n')
+
 
 def DoAttacks(playerNumber):
     global barbarianLands
 
     attacksSoFar = 0
-    attacksPerTurn = playerData[playerNumber][18] / 4 + 1
+    attacksPerTurn = int(playerData[playerNumber][18] / 4 + 1)
 
     while True:
         ClearScreen()
@@ -365,7 +367,10 @@ def DoAttacks(playerNumber):
             if attack < 0 or attack > 7:
                 continue
 
-            if attack == playerNumber + 1:
+            if attack == 0:
+                return
+
+            if attack == playerNumber + 2:
                 print('{0}, Please think again.  You are #{1}!'.format(players[playerNumber][playerData[playerNumber][17]], attack))
                 sleep(4)
                 continue
@@ -380,15 +385,12 @@ def DoAttacks(playerNumber):
                 sleep(4)
                 continue
 
-            if attack != 0 and playerData[attack - 1][0] != 0:
+            if attack > 1 and playerData[attack - 2][0] != 0:
                 print('That player is no longer in the game')
                 sleep(4)
                 continue
 
-            if attack == 0:
-                return
-
-            if attacksSoFar > attacksPerTurn:
+            if attacksSoFar >= attacksPerTurn:
                 print('Due to a shortage of nobles , you are limited to only\n{0} attacks per year'.format(attacksPerTurn))
                 sleep(4)
                 continue
@@ -410,7 +412,7 @@ def DoAttacks(playerNumber):
                         sleep(4)
                         continue
 
-                    Attack(playerNumber, attack - 1, soldiers)
+                    Attack(playerNumber, attack - 2, soldiers, False)
                     attacksSoFar += 1
                     break
 
@@ -426,8 +428,8 @@ def PrintAttackInternal(aggressor, defender, aggressorSoldiers, defenderSoldiers
     print('\n\n                                        Soldiers remaining:')
     print('\n             {0}:\t{1}'.format(GetFullPlayerName(aggressor), aggressorSoldiers))
 
-    if defender == 0:
-        print('             Pagan barbarians:\t{1}'.format(defenderSoldiers))
+    if defender < 0:
+        print('                       Pagan barbarians:\t{0}'.format(defenderSoldiers))
     else:
         print('             {0}:\t{1}'.format(GetFullPlayerName(defender), defenderSoldiers))
 
@@ -458,36 +460,39 @@ def Attack(aggressor, defender, aggressorSoldiers, aiTurn):
     defenderLands = playerData[defender][1]
     variableO1 = 75 - aggressorSoldiers - defenderSoldiers
     playerData[aggressor][15] = playerData[aggressor][15] - aggressorSoldiers
+    variableIH = 0
 
-    if defender == 0:
+    if defender < 0:
         defenderSoldiers = safeRandInt(1, safeRandInt(1, aggressorSoldiers * 3)) + safeRandInt(1, safeRandInt(1, aggressorSoldiers * 1.5))
         defenderSoldierStrength = 9
         defenderLands = barbarianLands
         variableO1 = 75 - aggressorSoldiers - defenderSoldiers
-        
     else:
         defenderSoldierStrength = playerData[defender][19]
-        
-        variableIH = 0
+
         if playerData[defender][15] < 1:
             defenderSoldiers = playerData[defender][3]
             defenderSoldierStrength = 5
             variableIH = 1
             variableO1 = -1
 
-    # FORO=0TOO1:NEXT
     while True:
+        ClearScreen()
+        PrintAttackInternal(aggressor, defender, aggressorSoldiers, defenderSoldiers)
+        sleep(.5)
+
         variableI7 = int(aggressorSoldiers / 15) + 1
         if safeRandInt(1, aggressorSoldierStrength) < safeRandInt(1, defenderSoldierStrength):
             aggressorSoldiers = aggressorSoldiers - variableI7
-            if defenderLands - landsSeized < 0:
-                BattleOver2(aggressor, defender, landsSeized, aggressorSoldiers, aiTurn)
-                return        
         else:
             landsSeized = landsSeized + safeRandInt(1, variableI7 * 26) - safeRandInt(1, variableI7 + 5)
             defenderSoldiers = defenderSoldiers - variableI7
             if landsSeized < 0:
                 landsSeized = 0
+
+        if defenderLands - landsSeized < 0:
+            BattleOver2(aggressor, defender, landsSeized, aggressorSoldiers, aiTurn)
+            return    
 
         if aggressorSoldiers > 0 and defenderSoldiers > 0:
             continue
@@ -504,25 +509,6 @@ def Attack(aggressor, defender, aggressorSoldiers, aiTurn):
 
         BattleOver1(aggressor, defender, landsSeized, aggressorSoldiers, aiTurn)
         return
-    
-
-
-
-
-
-        
-
-
-
-
-
-
-
-
-    ClearScreen()
-    PrintAttackInternal(aggressor, defender, aggressorSoldiers, defenderSoldiers)
-
-
 
 
 
@@ -551,7 +537,7 @@ def BattleOver1(playerNumber, defender, landsSeized, remainingSoldiers, aiTurn):
             landsSeized = int(landsSeized / safeRandInt(1, 3))
             print('In your defeat you nevertheless managed to capture {0} acres.'.format(landsSeized))
 
-    if defender == 0:
+    if defender < 0:
         playerData[playerNumber][15] = playerData[playerNumber][15] + remainingSoldiers
         playerData[playerNumber][1] = playerData[playerNumber][1] + landsSeized
         barbarianLands = barbarianLands - landsSeized
@@ -619,7 +605,7 @@ def BattleOver2(playerNumber, defender, landsSeized, remainingSoldiers, aiTurn):
 
     ClearScreen()
     print('\n                       Battle over')
-    if defender == 0:
+    if defender < 0:
         print('All barbarian lands have been seized\nThe remaining barbarians fled')
         playerData[playerNumber][1] = playerData[playerNumber][1] + landsSeized
         playerData[playerNumber][15] = playerData[playerNumber][15] + remainingSoldiers
@@ -757,6 +743,7 @@ def SetInvestment(taxIndex, playerNumber, customsCollected, salesCollected, inco
                 ClearScreen()
                 PrintTaxesAndInvestments(playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost)
                 print('Please think again . . . You only have {0} nobles\nto lead your troops.'.format(int(playerData[playerNumber][18] + .5)))
+                sleep(4)
                 continue
 
             if cost == 8:
@@ -1139,7 +1126,6 @@ def DoEndOfYear(playerNumber, peopleShare, peopleGrainDemands, armyShare, armyDe
         playerData[playerNumber][15] = playerData[playerNumber][15] - variablePA
 
     PrintMarketSummary(playerNumber, births, deaths, immigrations, malnutritionDeaths, starvationDeaths, armyStarvation, populationChange)
-    sleep(4)
     return starvationDeaths, immigrations
             
 def PrintMarketSummary(playerNumber, births, deaths, immigrations, malnutritionDeaths, starvationDeaths, armyStarvation, populationChange):
