@@ -57,7 +57,7 @@ Q9 == (ai turn temp variable)
 QB == (ai turn temp variable)
 QC == (ai turn temp variable)
 QD == (ai turn temp variable)
-QF == ????
+QF == Flag to determine if currently AI or human turn
 QP == (ai turn temp variable)
 QR == (ai turn temp variable)
 Z  == players (array)

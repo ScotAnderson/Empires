@@ -448,31 +448,128 @@ def PrintAttackInternal(aggressor, defender, aggressorSoldiers, defenderSoldiers
         print('             {0}:\t{1}'.format(GetFullPlayerName(defender), defenderSoldiers))
 
 def Attack(aggressor, defender, soldiers):
-
     variableI4 = playerData[aggressor][19]
     variableI5 = 0
     variableI2 = playerData[defender][15]
     variableI0 = playerData[defender][1]
     variableO1 = 75 - variableI1 - variableI2
     playerData[aggressor][15] = playerData[aggressor][15] - variableI1
-
-
-    
-
-
     pass
 
 
-def BattleOver(victory, playerNumber):
+def PauseOrWait(aiTurn):
+    if aiTurn == True:
+        sleep(4)
+    else:
+        input('<Enter>?')
+
+
+def BattleOver1(playerNumber, defender, landsSeized, remainingSoldiers, aiTurn):
+    global barbarianLands
+
     ClearScreen()
     print('\n                       Battle over\n')
 
-    if victory == True:
+    if remainingSoldiers > 0:
         print('The forces of {0} {1} were victorious.'.format(players[playerNumber][playerData[playerNumber][17]], players[playerNumber][0]))
+        print('{0} acres were seized'.format(landsSeized))
     else:
         print('{0} {1} was defeated.'.format(players[playerNumber][playerData[playerNumber][17]], players[playerNumber][0]))
+        if landsSeized < 2:
+            landsSeized = 0
+        else:
+            landsSeized = int(landsSeized / safeRandInt(1, 3))
+            print('In your defeat you nevertheless managed to capture {0} acres.'.format(landsSeized))
 
-    pass
+
+    if defender == 0:
+        playerData[playerNumber][15] = playerData[playerNumber][15] + remainingSoldiers
+        playerData[playerNumber][1] = playerData[playerNumber][1] + landsSeized
+        barbarianLands = barbarianLands - landsSeized
+        PauseOrWait(aiTurn)
+    else:
+        if landsSeized > playerData[defender][5] / 3:
+            if playerData[defender][3] > 0:
+                variableI6 = safeRandInt(1, playerData[defender][3])
+                print('{0} enemy serfs were beaten and murdered by your troops!'.format(variableI6))
+                playerData[defender][3] = playerData[defender][3] - variableI6
+
+            if playerData[defender][11] > 0:
+                variableI6 = safeRandInt(1, playerData[defender][11])
+                print('{0} enemy marketplaces were destroyed'.format(variableI6))
+                playerData[defender][11] = playerData[defender][11] - variableI6
+
+            if playerData[defender][2] > 0:
+                variableI6 = safeRandInt(1, playerData[defender][2])
+                print('{0} bushels of enemy grain were burned'.format(variableI6))
+                playerData[defender][2] = playerData[defender][2] - variableI6
+
+            if playerData[defender][12] > 0:
+                variableI6 = safeRandInt(1, playerData[defender][12])
+                print('{0} enemy grain mills were sabotaged'.format(variableI6))
+                playerData[defender][12] = playerData[defender][12] - variableI6
+            
+            if playerData[defender][13] > 0:
+                variableI6 = safeRandInt(1, playerData[defender][13])
+                print('{0} enemy foundries were leveled'.format(variableI6))
+                playerData[defender][13] = playerData[defender][13] - variableI6
+
+            if playerData[defender][14] > 0:
+                variableI6 = safeRandInt(1, playerData[defender][14])
+                print('{0} enemy shipyards were over-run'.format(variableI6))
+                playerData[defender][14] = playerData[defender][14] - variableI6
+
+            if playerData[defender][18] > 2:
+                variableI6 = safeRandInt(1, playerData[defender][18] / 2)
+                print('{0} enemy nobles were summarily executed'.format(variableI6))
+                playerData[defender][18] = playerData[defender][18] - variableI6
+
+            playerData[playerNumber][1] = playerData[playerNumber][1] + landsSeized
+            playerData[defender][1] = playerData[defender][1] - landsSeized
+
+            PauseOrWait(aiTurn)
+        else:
+
+
+
+
+
+# I1 == attacking soldiers?
+# I5 == lands seized?
+
+
+def BattleOver2(playerNumber, defender, landsSeized, remainingSoldiers, aiTurn):
+    global barbarianLands
+
+    ClearScreen()
+    print('\n                       Battle over')
+    if defender == 0:
+        print('All barbarian lands have been seized\nThe remaining barbarians fled')
+        playerData[playerNumber][1] = playerData[playerNumber][1] + landsSeized
+        playerData[playerNumber][15] = playerData[playerNumber][15] + remainingSoldiers
+        barbarianLands = 0
+
+    else:
+        print('The country of {0} was overrun!'.format(players[defender - 1][1]))
+        print('All enemy nobles were summarily executed!\n\n')
+        print('The remaining enemy soldiers were imprisoned. All enemy serfs')
+        print('have pledged oaths of fealty to you, And should now be consid-')
+        print('ered to be your people too. All enemy merchants fled the coun-')
+        print('try. Unfortunately, all enemy assets were sacked and destroyed')
+        print('by your revengeful army in a drunken riot following the victory')
+        print('celebration.')
+
+        if variableIH == 1:
+            variableIH = 0
+            playerData[defender][3] = variableI2
+
+        playerData[playerNumber][15] = playerData[playerNumber][15] + remainingSoldiers
+        playerData[playerNumber][1] = playerData[playerNumber][1] + playerData[defender][1]
+        playerData[defender][1] = 0
+        playerData[defender][0] = 1
+        playerData[playerNumber][3] = playerData[playerNumber][3] + playerData[defender][3]
+
+    PauseOrWait(aiTurn)
 
 
 
@@ -535,8 +632,7 @@ investmentType = [
 
 def SetInvestment(taxIndex, playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost):
     variableJ = 0
-    variableH = 0
-    
+    variableH = 0    
 
     cost = investmentType[taxIndex - 1][0]
     if taxIndex == 1:
