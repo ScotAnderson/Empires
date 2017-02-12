@@ -56,11 +56,6 @@ playerData = [
     [0, 10000, 15000 + safeRandInt(1, 10000), 2000, 1000, 0, 0, 25, 20, 5, 35,  0,  0,  0,  0, 20,  0,  2,  1, 15]
 ]
 
-variableO = 0
-
-#This seems to be the catch variable for when they use input for a pause (ie, show the summary and wait for enter to continue...)
-variableZ = ""
-
 #Suspect this is how much land the barbarians have...
 barbarianLands = 6000
 
@@ -101,167 +96,160 @@ def DoAITurn(playerNumber, weather):
     if playerData[playerNumber][0] != 0:
         return
 
-    variableDS = 0;
     ClearScreen()
     print("One moment -- {0} {1}'s turn . . .".format(players[playerNumber][playerData[playerNumber][17]], players[playerNumber][0]))
-    sleep(1)
+    sleep(.25)
 
     CheckForRandomDeath(playerNumber)
 
     if playerData[playerNumber][0] != 0:
         return
 
-    variableQ2 = 0
-    variableQ3 = 0
-    variableQ4 = 0
-    variableQ5 = 0
-    variableQ6 = 0
-    variableQ7 = 0
-    variableQ8 = 0
-    variableQ9 = 0
-    variableQ0 = 0
-    variableQB = 0
-    variableQC = 0
-    variableQD = 0
-    variableQP = 0
+    serfs = 0        #Q2
+    grainMarket = 0  #Q3
+    priceMarket = 0  #Q4
+    money = 0        #Q5
+    merchants = 0    #Q6
+    marketplaces = 0 #Q7
+    mills = 0        #Q8
+    foundries = 0    #Q9
+    shipyards = 0    #Q0
+    palace = 0       #QB
+    nobles = 0       #QC
+    armyEffectiveness = 0  #QD
+    howManyHumanPlayersAreAlive = 0  #QP
 
     for q in range(0, numberOfHumanPlayers):
         if playerData[q][0] == 0:
-            variableQP = variableQP + 1
-            variableQ2 = playerData[q][3] + variableQ2
-            variableQ3 = playerData[q][5] + variableQ3
-            variableQ4 = playerData[q][6] + variableQ4
-            variableQ5 = playerData[q][4] + variableQ5
-            variableQ6 = playerData[q][7] + variableQ6
-            variableQ7 = playerData[q][11] + variableQ7
-            variableQ8 = playerData[q][12] + variableQ8
-            variableQ9 = playerData[q][13] + variableQ9
-            variableQ0 = playerData[q][14] + variableQ0
-            variableQB = playerData[q][16] + variableQB
-            variableQC = playerData[q][18] + variableQC
-            variableQD = playerData[q][19] + variableQD
+            howManyHumanPlayersAreAlive = howManyHumanPlayersAreAlive + 1
+            serfs        = playerData[q][3] + serfs
+            grainMarket  = playerData[q][5] + grainMarket
+            priceMarket  = playerData[q][6] + priceMarket
+            money        = playerData[q][4] + money
+            merchants    = playerData[q][7] + merchants
+            marketplaces = playerData[q][11] + marketplaces
+            mills        = playerData[q][12] + mills
+            foundries    = playerData[q][13] + foundries
+            shipyards    = playerData[q][14] + shipyards
+            palace       = playerData[q][16] + palace
+            nobles       = playerData[q][18] + nobles
+            armyEffectiveness = playerData[q][19] + armyEffectiveness
 
-    variableQ2 = variableQ2 / variableQP
-    variableQ3 = variableQ3 / variableQP
-    variableQ4 = variableQ4 / variableQP
-    variableQ5 = variableQ5 / variableQP
-    variableQ6 = variableQ6 / variableQP
-    variableQ7 = variableQ7 / variableQP
-    variableQ8 = variableQ8 / variableQP
-    variableQ9 = variableQ9 / variableQP
-    variableQ0 = variableQ0 / variableQP
-    variableQB = variableQB / variableQP
-    variableQC = variableQC / variableQP
-    variableQD = variableQD / variableQP
+    serfs        = serfs / howManyHumanPlayersAreAlive
+    grainMarket  = grainMarket / howManyHumanPlayersAreAlive
+    priceMarket  = priceMarket / howManyHumanPlayersAreAlive
+    money        = money / howManyHumanPlayersAreAlive
+    merchants    = merchants / howManyHumanPlayersAreAlive
+    marketplaces = marketplaces / howManyHumanPlayersAreAlive
+    mills        = mills / howManyHumanPlayersAreAlive
+    foundries    = foundries / howManyHumanPlayersAreAlive
+    shipyards    = shipyards / howManyHumanPlayersAreAlive
+    palace       = palace / howManyHumanPlayersAreAlive
+    nobles       = nobles / howManyHumanPlayersAreAlive
+    armyEffectiveness = armyEffectiveness / howManyHumanPlayersAreAlive
 
     while True:
-        variableQ2 = int(variableQ2 + safeRandInt(1, 200) - safeRandInt(1, 200))
-        variableQ3 = int(variableQ3 + safeRandInt(1, 1000) - safeRandInt(1, 1000))
-        variableQ4 = variableQ4 + random() - random()
-        variableQ5 = int(variableQ5 + safeRandInt(1, 1500) - safeRandInt(1, 1500))
-        variableQ6 = int(variableQ6 + safeRandInt(1, 25) - safeRandInt(1, 25))
-        if variableQ4 < 0:
-            variableQ4 = 0
+        serfs = int(serfs + safeRandInt(1, 200) - safeRandInt(1, 200))
+        grainMarket = int(grainMarket + safeRandInt(1, 1000) - safeRandInt(1, 1000))
+        priceMarket = priceMarket + random() - random()
+        money = int(money + safeRandInt(1, 1500) - safeRandInt(1, 1500))
+        merchants = int(merchants + safeRandInt(1, 25) - safeRandInt(1, 25))
+        if priceMarket < 0:
+            priceMarket = 0
         else:
             break
 
-    variableQ7 = int(variableQ7 + safeRandInt(1, 4) - safeRandInt(1, 4))
-    variableQ8 = int(variableQ8 + safeRandInt(1, 2) - safeRandInt(1, 2))
+    marketplaces = int(marketplaces + safeRandInt(1, 4) - safeRandInt(1, 4))
+    mills = int(mills + safeRandInt(1, 2) - safeRandInt(1, 2))
     if random() <= 0.3:
-        variableQ9 = int(variableQ9 + safeRandInt(1, 2) - safeRandInt(1, 2))
-        variableQ0 = int(variableQ0 + safeRandInt(1, 2) - safeRandInt(1, 2))
+        foundries = int(foundries + safeRandInt(1, 2) - safeRandInt(1, 2))
+        shipyards = int(shipyards + safeRandInt(1, 2) - safeRandInt(1, 2))
         if random() <= 0.5:
-            variableQB = int(variableQB + safeRandInt(1, 2) - safeRandInt(1, 2))
-            variableQC = int(variableQC + safeRandInt(1, 2) - safeRandInt(1, 2))
+            palace = int(palace + safeRandInt(1, 2) - safeRandInt(1, 2))
+            nobles = int(nobles + safeRandInt(1, 2) - safeRandInt(1, 2))
 
-    playerData[playerNumber][3] = variableQ2
-    if variableQ3 > playerData[playerNumber][5] and safeRandInt(1, 9) > 6:
-        playerData[playerNumber][5] = variableQ3
-        playerData[playerNumber][6] = variableQ4
+    playerData[playerNumber][3] = serfs
+    if grainMarket > playerData[playerNumber][5] and safeRandInt(1, 9) > 6:
+        playerData[playerNumber][5] = grainMarket
+        playerData[playerNumber][6] = priceMarket
         if weather < 3:
             playerData[playerNumber][6] = playerData[playerNumber][6] + random() / 1.5
 
 
-    playerData[playerNumber][4] = variableQ5
-    if variableQ6 > playerData[playerNumber][7]:
-        playerData[playerNumber][7] = variableQ6
+    playerData[playerNumber][4] = money
+    if merchants > playerData[playerNumber][7]:
+        playerData[playerNumber][7] = merchants
 
-    if variableQ7 > playerData[playerNumber][11]:
-        playerData[playerNumber][11] = variableQ7
+    if marketplaces > playerData[playerNumber][11]:
+        playerData[playerNumber][11] = marketplaces
 
-    if variableQ8 > playerData[playerNumber][12]:
-        playerData[playerNumber][12] = variableQ8
+    if mills > playerData[playerNumber][12]:
+        playerData[playerNumber][12] = mills
 
-    if variableQ9 > playerData[playerNumber][13]:
-        playerData[playerNumber][13] = variableQ9
+    if foundries > playerData[playerNumber][13]:
+        playerData[playerNumber][13] = foundries
 
-    if variableQ0 > playerData[playerNumber][14]:
-        playerData[playerNumber][14] = variableQ0
+    if shipyards > playerData[playerNumber][14]:
+        playerData[playerNumber][14] = shipyards
 
-    if variableQB > playerData[playerNumber][16]:
-        playerData[playerNumber][16] = variableQB
+    if palace > playerData[playerNumber][16]:
+        playerData[playerNumber][16] = palace
 
-    if variableQC > playerData[playerNumber][18]:
-        playerData[playerNumber][18] = variableQC
+    if nobles > playerData[playerNumber][18]:
+        playerData[playerNumber][18] = nobles
 
     playerData[playerNumber][15] = 10 * playerData[playerNumber][18] + safeRandInt(1, 10 * playerData[playerNumber][18])
-    variableIQ = 0
 
-    while (playerData[playerNumber][15] / variableQ2 > playerData[playerNumber][13] * .01 + .05):
+    while (playerData[playerNumber][15] / serfs > playerData[playerNumber][13] * .01 + .05):
         playerData[playerNumber][15] = playerData[playerNumber][15] / 2
 
-    playerData[playerNumber][19] = variableQD
-    CheckForTitles(playerNumber)
-    sleep(4)
+    playerData[playerNumber][19] = armyEffectiveness
+    CheckForTitles(playerNumber, True)
 
+    marketHumanPlayer = safeRandInt(1, numberOfHumanPlayers)
+    while playerData[marketHumanPlayer][0] != 0:
+        marketHumanPlayer = safeRandInt(1, numberOfHumanPlayers)
 
-    variableQ = safeRandInt(1, numberOfHumanPlayers)
-    while playerData[variableQ][0] != 0:
-        variableQ = safeRandInt(1, numberOfHumanPlayers)
-
-    if playerData[playerNumber][5] < 1:
-        doAIAttack(playerNumber)
-
-
-    while True:
-        variableQR = random() * playerData[variableQ][5]
-        if variableQR * playerData[variableQ][6] < playerData[playerNumber][4]:
-            playerData[variableQ][4] = playerData[variableQ][4] + int(variableQR * playerData[variableQ][6] * 90) / 100
-            playerData[variableQ][5] = playerData[variableQ][5] - variableQR
-            doAIAttack(playerNumber)
-            break
-        else:
-            if safeRandInt(1, 9) <= 3:
-                doAIAttack(playerNumber)
+    if playerData[marketHumanPlayer][5] > 0:
+        while True:
+            amountOfGrainToBuy = random() * playerData[marketHumanPlayer][5]
+            if amountOfGrainToBuy * playerData[marketHumanPlayer][6] < playerData[playerNumber][4]:
+                playerData[marketHumanPlayer][4] = playerData[marketHumanPlayer][4] + int(amountOfGrainToBuy * playerData[marketHumanPlayer][6] * 90) / 100
+                playerData[marketHumanPlayer][5] = playerData[marketHumanPlayer][5] - amountOfGrainToBuy
                 break
 
-def doAIAttack(playerNumber):
-    if safeRandInt(1, 9) < 2:
-        return
+            if safeRandInt(1, 9) <= 3:
+                break
 
-    if currentYear < 3:
-        variableI = 0
+    attacksSoFar = 0
+    defender = -1
 
-        if barbarianLands < 0:
+    while True:
+        if safeRandInt(1, 9) < 2:
             return
+
+        if currentYear < 3:
+            if barbarianLands <= 0:
+                return
+            defender = -1            
         else:
-            variableQF = 1
-            variableI1 = safeRandInt(1, playerData[playerNumber][15])
-            #TODO: Jump into attack here
-            variableQF = 0
-            #variableIQ = variableIQ + 1
+            defender = playerNumber
+            while defender == playerNumber or playerData[defender][0] != 0:
+                defender = safeRandInt(0, 5)
 
-            if playerData[playerNumber][15] > 30 and variableIQ < playerData[playerNumber][18] / 4:
-                doAIAttack(playerNumber)
 
-                                     
+        Attack(playerNumber, defender, safeRandInt(1, playerData[playerNumber][15]), True)
+        attacksSoFar = attacksSoFar + 1
+        
+        if playerData[playerNumber][15] <= 30 or attacksSoFar >= playerData[playerNumber][18] / 4:
+            return
 
 
 
 
 
 # Original code 359 - 369
-def CheckForTitles(playerNumber):
+def CheckForTitles(playerNumber, aiTurn):
     # Check for the "prince" title
     if playerData[playerNumber][11] > 7 and \
        playerData[playerNumber][12] > 3 and \
@@ -293,13 +281,15 @@ def CheckForTitles(playerNumber):
         PrintYearSummary()
         exit()
 
-    # In the original code, there is a check here for QF = 1, which either results in a sleep, or a full return (which ends the players turn)
-    # QF = 1 is set for the AI turns, so humans have a change to see it most likely.
+    if aiTurn == True:
+        sleep(4)
+
+    
+
 
 def DoHumanTurn(playerNumber, weather):
     CheckForPlague(playerNumber)
     starvationDeaths = 0
-    variableIQ = 1
 
     #usableLand = allLand                    - numberSerfs                 - (numberNobles * 2)                 - howMuchOfPalaceWasBuilt      - numberOfMerchants           - (numberSoldiers * 2)
     usableLand = playerData[playerNumber][1] - playerData[playerNumber][3] - (playerData[playerNumber][18] * 2) - playerData[playerNumber][16] - playerData[playerNumber][7] - (playerData[playerNumber][15] * 2)
@@ -315,7 +305,7 @@ def DoHumanTurn(playerNumber, weather):
     if playerData[playerNumber][0] != 0:
         return
 
-    CheckForTitles(playerNumber)
+    CheckForTitles(playerNumber, False)
 
     if playerData[playerNumber][2] * 3 < usableLand:
         usableLand = playerData[playerNumber][2] * 3
@@ -455,43 +445,40 @@ def PrintAttackInternal(aggressor, defender, aggressorSoldiers, defenderSoldiers
 
 def Attack(aggressor, defender, aggressorSoldiers, aiTurn):
     aggressorSoldierStrength = playerData[aggressor][19]
-    landsSeized = 0
-    defenderSoldiers = playerData[defender][15]
-    defenderLands = playerData[defender][1]
-    variableO1 = 75 - aggressorSoldiers - defenderSoldiers
     playerData[aggressor][15] = playerData[aggressor][15] - aggressorSoldiers
-    variableIH = 0
+    serfsDefending = False
+    landsSeized = 0
 
     if defender < 0:
         defenderSoldiers = safeRandInt(1, safeRandInt(1, aggressorSoldiers * 3)) + safeRandInt(1, safeRandInt(1, aggressorSoldiers * 1.5))
         defenderSoldierStrength = 9
         defenderLands = barbarianLands
-        variableO1 = 75 - aggressorSoldiers - defenderSoldiers
     else:
+        defenderSoldiers = playerData[defender][15]
         defenderSoldierStrength = playerData[defender][19]
+        defenderLands = playerData[defender][1]
 
         if playerData[defender][15] < 1:
             defenderSoldiers = playerData[defender][3]
             defenderSoldierStrength = 5
-            variableIH = 1
-            variableO1 = -1
+            serfsDefending = True
 
     while True:
         ClearScreen()
         PrintAttackInternal(aggressor, defender, aggressorSoldiers, defenderSoldiers)
         sleep(.5)
 
-        variableI7 = int(aggressorSoldiers / 15) + 1
+        troopUnit = int(aggressorSoldiers / 15) + 1
         if safeRandInt(1, aggressorSoldierStrength) < safeRandInt(1, defenderSoldierStrength):
-            aggressorSoldiers = aggressorSoldiers - variableI7
+            aggressorSoldiers = aggressorSoldiers - troopUnit
         else:
-            landsSeized = landsSeized + safeRandInt(1, variableI7 * 26) - safeRandInt(1, variableI7 + 5)
-            defenderSoldiers = defenderSoldiers - variableI7
+            landsSeized = landsSeized + safeRandInt(1, troopUnit * 26) - safeRandInt(1, troopUnit + 5)
+            defenderSoldiers = defenderSoldiers - troopUnit
             if landsSeized < 0:
                 landsSeized = 0
 
         if defenderLands - landsSeized < 0:
-            BattleOver2(aggressor, defender, landsSeized, aggressorSoldiers, aiTurn)
+            BattleOver2(aggressor, defender, landsSeized, aggressorSoldiers, defenderSoldiers, serfsDefending, aiTurn)
             return    
 
         if aggressorSoldiers > 0 and defenderSoldiers > 0:
@@ -503,11 +490,11 @@ def Attack(aggressor, defender, aggressorSoldiers, aiTurn):
         if defenderSoldiers < 0:
             defenderSoliders = 0
 
-        if variableIH == 1 and aggressorSoldiers > 0:
-            BattleOver2(aggressor, defender, landsSeized, aggressorSoldiers, aiTurn)
+        if serfsDefending == True and aggressorSoldiers > 0:
+            BattleOver2(aggressor, defender, landsSeized, aggressorSoldiers, defenderSoldiers, serfsDefending, aiTurn)
             return
 
-        BattleOver1(aggressor, defender, landsSeized, aggressorSoldiers, aiTurn)
+        BattleOver1(aggressor, defender, landsSeized, aggressorSoldiers, defenderSoldiers, serfsDefending, aiTurn)
         return
 
 
@@ -519,7 +506,7 @@ def PauseOrWait(aiTurn):
         input('<Enter>?')
 
 
-def BattleOver1(playerNumber, defender, landsSeized, remainingSoldiers, aiTurn):
+def BattleOver1(playerNumber, defender, landsSeized, remainingSoldiers, remainingDefenders, serfsDefending, aiTurn):
     global barbarianLands
 
     ClearScreen()
@@ -545,62 +532,61 @@ def BattleOver1(playerNumber, defender, landsSeized, remainingSoldiers, aiTurn):
     else:
         if landsSeized > playerData[defender][5] / 3:
             if playerData[defender][3] > 0:
-                variableI6 = safeRandInt(1, playerData[defender][3])
-                print('{0} enemy serfs were beaten and murdered by your troops!'.format(variableI6))
-                playerData[defender][3] = playerData[defender][3] - variableI6
+                serfs = safeRandInt(1, playerData[defender][3])
+                print('{0} enemy serfs were beaten and murdered by your troops!'.format(serfs))
+                playerData[defender][3] = playerData[defender][3] - serfs
 
             if playerData[defender][11] > 0:
-                variableI6 = safeRandInt(1, playerData[defender][11])
-                print('{0} enemy marketplaces were destroyed'.format(variableI6))
-                playerData[defender][11] = playerData[defender][11] - variableI6
+                markets = safeRandInt(1, playerData[defender][11])
+                print('{0} enemy marketplaces were destroyed'.format(markets))
+                playerData[defender][11] = playerData[defender][11] - markets
 
             if playerData[defender][2] > 0:
-                variableI6 = safeRandInt(1, playerData[defender][2])
-                print('{0} bushels of enemy grain were burned'.format(variableI6))
-                playerData[defender][2] = playerData[defender][2] - variableI6
+                grain = safeRandInt(1, playerData[defender][2])
+                print('{0} bushels of enemy grain were burned'.format(grain))
+                playerData[defender][2] = playerData[defender][2] - grain
 
             if playerData[defender][12] > 0:
-                variableI6 = safeRandInt(1, playerData[defender][12])
-                print('{0} enemy grain mills were sabotaged'.format(variableI6))
-                playerData[defender][12] = playerData[defender][12] - variableI6
+                mills = safeRandInt(1, playerData[defender][12])
+                print('{0} enemy grain mills were sabotaged'.format(mills))
+                playerData[defender][12] = playerData[defender][12] - mills
             
             if playerData[defender][13] > 0:
-                variableI6 = safeRandInt(1, playerData[defender][13])
-                print('{0} enemy foundries were leveled'.format(variableI6))
-                playerData[defender][13] = playerData[defender][13] - variableI6
+                foundries = safeRandInt(1, playerData[defender][13])
+                print('{0} enemy foundries were leveled'.format(foundries))
+                playerData[defender][13] = playerData[defender][13] - foundries
 
             if playerData[defender][14] > 0:
-                variableI6 = safeRandInt(1, playerData[defender][14])
-                print('{0} enemy shipyards were over-run'.format(variableI6))
-                playerData[defender][14] = playerData[defender][14] - variableI6
+                shipyards = safeRandInt(1, playerData[defender][14])
+                print('{0} enemy shipyards were over-run'.format(shipyards))
+                playerData[defender][14] = playerData[defender][14] - shipyards
 
             if playerData[defender][18] > 2:
-                variableI6 = safeRandInt(1, playerData[defender][18] / 2)
-                print('{0} enemy nobles were summarily executed'.format(variableI6))
-                playerData[defender][18] = playerData[defender][18] - variableI6
+                nobles = safeRandInt(1, playerData[defender][18] / 2)
+                print('{0} enemy nobles were summarily executed'.format(nobles))
+                playerData[defender][18] = playerData[defender][18] - nobles
 
             playerData[playerNumber][1] = playerData[playerNumber][1] + landsSeized
             playerData[defender][1] = playerData[defender][1] - landsSeized
-
             PauseOrWait(aiTurn)
+
         else:
             playerData[playerNumber][15] = playerData[playerNumber][15] + remainingSoldiers
             playerData[playerNumber][1] = playerData[playerNumber][1] + landsSeized
 
-            if variableIH == 1:
-                variableIH = 0
+            if serfsDefending == True:
                 playerNumber[defender][15] = 0
-                playerNumber[defender][3] = variableI2
+                playerNumber[defender][3] = remainingDefenders
                 playerNumber[defender][1] = playerNumber[defender][1] - landsSeized
                 PauseOrWait(aiTurn)
+            else:
+                playerData[defender][15] = remainingDefenders
+                playerData[defender][1] = playerData[defender][1] - landsSeized
+                PauseOrWait(aiTurn)
 
-            playerData[defender][15] = varaibleI2
-            playerData[defender][1] = playerData[defender][1] - landsSeized
-            PauseOrWait(aiTurn)
 
 
-
-def BattleOver2(playerNumber, defender, landsSeized, remainingSoldiers, aiTurn):
+def BattleOver2(playerNumber, defender, landsSeized, remainingSoldiers, remainingDefenders, serfsDefending, aiTurn):
     global barbarianLands
 
     ClearScreen()
@@ -621,12 +607,12 @@ def BattleOver2(playerNumber, defender, landsSeized, remainingSoldiers, aiTurn):
         print('by your revengeful army in a drunken riot following the victory')
         print('celebration.')
 
-        if variableIH == 1:
-            variableIH = 0
-            playerData[defender][3] = variableI2
-
         playerData[playerNumber][15] = playerData[playerNumber][15] + remainingSoldiers
         playerData[playerNumber][1] = playerData[playerNumber][1] + playerData[defender][1]
+
+        if serfsDefending == True:
+            playerData[defender][3] = remainingDefenders
+
         playerData[defender][1] = 0
         playerData[defender][0] = 1
         playerData[playerNumber][3] = playerData[playerNumber][3] + playerData[defender][3]
@@ -693,14 +679,14 @@ investmentType = [
 ]
 
 def SetInvestment(taxIndex, playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost):
-    variableJ = 0
-    variableH = 0    
+    neededMerchants = 0
+    neededNobles = 0    
 
     cost = investmentType[taxIndex - 1][0]
     if taxIndex == 1:
-        variableJ = safeRandInt(1, 7)
+        neededMerchants = safeRandInt(1, 7)
     if taxIndex == 6:
-        variableH = safeRandInt(1, 4)
+        neededNobles = safeRandInt(1, 4)
 
     while True:
         ClearScreen()
@@ -721,7 +707,7 @@ def SetInvestment(taxIndex, playerNumber, customsCollected, salesCollected, inco
                 sleep(4)
                 continue
 
-            if amount + (amount - 1) * (variableJ + variableH) > playerData[playerNumber][3]:
+            if amount + (amount - 1) * (neededMerchants + neededNobles) > playerData[playerNumber][3]:
                 ClearScreen()
                 PrintTaxesAndInvestments(playerNumber, customsCollected, salesCollected, incomeCollected, marketProfit, millProfit, foundryProfit, shipyardProfit, soldierCost)
                 print('You don\'t have enough serfs to train')
@@ -749,13 +735,12 @@ def SetInvestment(taxIndex, playerNumber, customsCollected, salesCollected, inco
             if cost == 8:
                 playerData[playerNumber][3] = playerData[playerNumber][3] - amount
             else:
-                playerData[playerNumber][7] = playerData[playerNumber][7] + variableJ * amount
-                playerData[playerNumber][18] = playerData[playerNumber][18] + variableH * amount
-                playerData[playerNumber][3] = playerData[playerNumber][3] - (variableJ + variableH) * amount
+                playerData[playerNumber][7] = playerData[playerNumber][7] + neededMerchants * amount
+                playerData[playerNumber][18] = playerData[playerNumber][18] + neededNobles * amount
+                playerData[playerNumber][3] = playerData[playerNumber][3] - (neededMerchants + neededNobles) * amount
 
             playerData[playerNumber][4] = playerData[playerNumber][4] - amount * cost
             playerData[playerNumber][10 + taxIndex] = playerData[playerNumber][10 + taxIndex] + amount
-            variableKL = 1
             return
 
         except ValueError:
@@ -836,10 +821,7 @@ def PrintTaxesAndInvestments(playerNumber,
     print('6) Palace        {0}% Completed                      5000\n\n'.format(playerData[playerNumber][16] * 10))
     #TODO: Fix the number padding on the above table so it looks right with various values
 
-    #TODO Figure out what this KL variable eval code is for?
-    #if variableKL == 1:
-    #    variableKL = 0
-    #    return
+
 
 
 def BuyGrain(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands):
@@ -1095,9 +1077,9 @@ def DoEndOfYear(playerNumber, peopleShare, peopleGrainDemands, armyShare, armyDe
     immigrations = 0
 
     if peopleShare > (peopleGrainDemands * 1.5):
-        variableD = (sqrt(peopleShare - peopleGrainDemands) - safeRandInt(1, int(playerData[playerNumber][8] * 1.5)))
-        if variableD >= 0:
-            immigrations = safeRandInt(1, int(2 * variableD + 1))
+        immigrantBase = (sqrt(peopleShare - peopleGrainDemands) - safeRandInt(1, int(playerData[playerNumber][8] * 1.5)))
+        if immigrantBase >= 0:
+            immigrations = safeRandInt(1, int(2 * immigrantBase + 1))
 
     malnutritionDeaths = 0
     starvationDeaths = 0
@@ -1120,10 +1102,10 @@ def DoEndOfYear(playerNumber, peopleShare, peopleGrainDemands, armyShare, armyDe
         playerData[playerNumber][15] = playerData[playerNumber][15] - armyStarvation
 
     #This just seems to be the same army starvation code duplicated?
-    variablePA = 0
+    armyStarvation2 = 0
     if armyShare * 2 < armyDemands:
-        variablePA = safeRandInt(1, int(playerData[playerNumber][15] / 5))
-        playerData[playerNumber][15] = playerData[playerNumber][15] - variablePA
+        armyStarvation2 = safeRandInt(1, int(playerData[playerNumber][15] / 5))
+        playerData[playerNumber][15] = playerData[playerNumber][15] - armyStarvation2
 
     PrintMarketSummary(playerNumber, births, deaths, immigrations, malnutritionDeaths, starvationDeaths, armyStarvation, populationChange)
     return starvationDeaths, immigrations
@@ -1198,7 +1180,6 @@ def MainLoop():
 
     # Do player turns (Human and AI)
     for playerNumber in range(0, 6):
-        variableQF = 0
         if playerNumber >= numberOfHumanPlayers:
             DoAITurn(playerNumber, weather)
         else:

@@ -1,7 +1,7 @@
 A  == playerData (array)
 AD == armyGrainDemands
 BA == barbarianLands
-D  == (intermediate variable for calculating immigrants due to giving extra food to people)
+D  == immigrantBase (intermediate variable for calculating immigrants due to giving extra food to people)
 DA == armyStarvation
 DB == births
 DD == deaths
@@ -27,8 +27,15 @@ HA == grainHarvest
 HM == armyShare (grain given to army)
 HS == peopleShare (grain given to people)
 I  == (temporary counter in various places)
-I1 == newMerchants
-I2 == newNobles
+I0 == defenderLands (temp variable to hold available defender lands during attack)
+I1 == newMerchants (during endofmarket), aggressorSoldiers (during attacks)
+I2 == newNobles (during endofmarket), defenderSoldiers (during attacks)
+I3 == defenderSoldierStrength
+I4 == aggressorSoldierStrength
+I5 == landsSeized
+I6 == (temp variable to hold random values during battle over calculations)
+I7 == troopUnit (number of soldiers to lose per 'tick' of combat)
+IH == serfsDefending (flag to determine if defending troops are soldiers or serfs)
 II == (Counter for the pause function at GOSUB59)
 IQ == (number of attacks the player has made this turn)
 J  == (backup counter in various places, for if I is already in use)
@@ -39,27 +46,27 @@ LA == usableLand
 NP == numberOfHumanPlayers
 NW == weather
 NY == currentYear
-PA == (intermediate variable used in the duplicate version of the armyStarvation code???)
+PA == armyStarvation2 (intermediate variable used in the duplicate version of the armyStarvation code???)
 PD == peopleGrainDemands
 PO == people (number of people == serfs + merchants + nobles)
 PT == populationChange
 RA == ratesAte
-Q  == ???
-Q0 == (ai turn temp variable)
-Q2 == (ai turn temp variable)
-Q3 == (ai turn temp variable)
-Q4 == (ai turn temp variable)
-Q5 == (ai turn temp variable)
-Q6 == (ai turn temp variable)
-Q7 == (ai turn temp variable)
-Q8 == (ai turn temp variable)
-Q9 == (ai turn temp variable)
-QB == (ai turn temp variable)
-QC == (ai turn temp variable)
-QD == (ai turn temp variable)
+Q  == marketHumanPlayer (random human player that an AI might buy grain from)
+Q0 == shipyards (ai turn temp variable)
+Q2 == serfs (ai turn temp variable)
+Q3 == grainMarkat (ai turn temp variable)
+Q4 == priceMarket (ai turn temp variable)
+Q5 == money (ai turn temp variable)
+Q6 == merchants (ai turn temp variable)
+Q7 == marketplaces(ai turn temp variable)
+Q8 == mills (ai turn temp variable)
+Q9 == foundries (ai turn temp variable)
+QB == palace (ai turn temp variable)
+QC == nobles (ai turn temp variable)
+QD == armyEffectiveness (ai turn temp variable)
 QF == Flag to determine if currently AI or human turn
-QP == (ai turn temp variable)
-QR == (ai turn temp variable)
+QP == howManyHumanPlayersAreAlive (ai turn temp variable)
+QR == amountOfGrainToBuy (ai turn temp variable)
 Z  == players (array)
 Z  == (you can use the same variable name for individual variables and arrays, this one is a temp variable used in various places)
 
