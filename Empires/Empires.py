@@ -67,26 +67,20 @@ def GetTitleName(playerNumber):
 # Original code 395- - 409
 def CheckForPlague(playerNumber):
     if random() <= 0.02:
-        ClearScreen();
-        print("                      P L A G U E  ! ! !");
-        print("Black death has struck your nation.");
-        
         serfs = safeRandInt(1, int(playerData[playerNumber][3] / 2))
-        playerData[playerNumber][3] = playerData[playerNumber][3] - serfs
-        print("{0} serfs died.".format(serfs));
-
-        merchants = safeRandInt(1, int(playerData[playerNumber][7] / 3))
-        playerData[playerNumber][7] = playerData[playerNumber][7] - merchants
-        print("{0} merchants died.".format(merchants));
-
-        soldiers = safeRandInt(1, int(playerData[playerNumber][15] / 3))
-        playerData[playerNumber][15] = playerData[playerNumber][15] - soldiers
-        print("{0} soldiers died.".format(soldiers));
+        playerData[playerNumber][3] -= serfs
         
+        merchants = safeRandInt(1, int(playerData[playerNumber][7] / 3))
+        playerData[playerNumber][7] -= merchants
+        
+        soldiers = safeRandInt(1, int(playerData[playerNumber][15] / 3))
+        playerData[playerNumber][15] -= soldiers
+                
         nobles = safeRandInt(1, int(playerData[playerNumber][18] / 3))
-        playerData[playerNumber][18] = playerData[playerNumber][18] - nobles
-        print("{0} nobles died.".format(soldiers));
-
+        playerData[playerNumber][18] -= nobles
+        
+        ClearScreen();
+        PrintPlague(serfs, merchants, soldiers, nobles)
         sleep(8)
 
 
@@ -205,15 +199,15 @@ def DoAITurn(playerNumber, weather):
         playerData[playerNumber][15] = playerData[playerNumber][15] / 2
 
     playerData[playerNumber][19] = armyEffectiveness
-    CheckForTitles(playerNumber, True)
+    CheckForTitles(playerNumber)
 
-    marketHumanPlayer = safeRandInt(1, numberOfHumanPlayers)
+    marketHumanPlayer = safeRandInt(1, numberOfHumanPlayers) - 1
     while playerData[marketHumanPlayer][0] != 0:
         marketHumanPlayer = safeRandInt(1, numberOfHumanPlayers)
 
     if playerData[marketHumanPlayer][5] > 0:
         while True:
-            amountOfGrainToBuy = random() * playerData[marketHumanPlayer][5]
+            amountOfGrainToBuy = int(random() * playerData[marketHumanPlayer][5])
             if amountOfGrainToBuy * playerData[marketHumanPlayer][6] < playerData[playerNumber][4]:
                 playerData[marketHumanPlayer][4] = playerData[marketHumanPlayer][4] + int(amountOfGrainToBuy * playerData[marketHumanPlayer][6] * 90) / 100
                 playerData[marketHumanPlayer][5] = playerData[marketHumanPlayer][5] - amountOfGrainToBuy
@@ -246,13 +240,7 @@ def DoAITurn(playerNumber, weather):
             return
 
 
-
-
-
-# Original code 359 - 369
-def CheckForTitles(playerNumber, aiTurn):
-    checkForTitles = False
-
+def CheckForTitles(playerNumber):
     # Check for the "prince" title
     if playerData[playerNumber][11] > 7 and \
        playerData[playerNumber][12] > 3 and \
@@ -261,7 +249,6 @@ def CheckForTitles(playerNumber, aiTurn):
        playerData[playerNumber][3] > 2300 and \
        playerData[playerNumber][18] > 10:
         playerData[playerNumber][17] = 3
-        checkForTitles = True
 
     # Check for the "king" title
     if playerData[playerNumber][11] > 13 and \
@@ -272,7 +259,6 @@ def CheckForTitles(playerNumber, aiTurn):
        playerData[playerNumber][3] > 2600 and \
        playerData[playerNumber][18] > 25:
         playerData[playerNumber][17] = 4
-        checkForTitles = True
 
     # Check for the "Emperor" title
     if playerData[playerNumber][17] > 3 and \
@@ -285,11 +271,6 @@ def CheckForTitles(playerNumber, aiTurn):
         print("{0} Wins !\n\n".format(GetFullPlayerName(playerNumber)))
         PrintYearSummary()
         exit()
-
-    if checkForTitles == True and aiTurn == True:
-        sleep(4)
-
-    
 
 
 def DoHumanTurn(playerNumber, weather):
@@ -310,7 +291,7 @@ def DoHumanTurn(playerNumber, weather):
     if playerData[playerNumber][0] != 0:
         return
 
-    CheckForTitles(playerNumber, False)
+    CheckForTitles(playerNumber)
 
     if playerData[playerNumber][2] * 3 < usableLand:
         usableLand = playerData[playerNumber][2] * 3
@@ -339,9 +320,9 @@ def PrintAttacks():
     print('Land holdings:\n')
     print('1)  Barbarians\t{0}'.format(barbarianLands))
 
-    for i in range(1, 6):
+    for i in range(0, 6):
         if playerData[i][0] == 0:
-            print('{0})  {1}\t{2}'.format(i + 1, players[i][1], playerData[i][1]))
+            print('{0})  {1}\t{2}'.format(i + 2, players[i][1], playerData[i][1]))
 
     print('\n\n\n')
 
@@ -419,7 +400,7 @@ def DoAttacks(playerNumber):
             break
             
 
-def PrintAttackInternal(aggressor, defender, aggressorSoldiers, defenderSoldiers):
+def PrintAttackInternal(aggressor, defender, aggressorSoldiers, defenderSoldiers, serfsDefending):
     print('\n\n                                        Soldiers remaining:')
     print('\n             {0}:\t{1}'.format(GetFullPlayerName(aggressor), aggressorSoldiers))
 
@@ -427,7 +408,8 @@ def PrintAttackInternal(aggressor, defender, aggressorSoldiers, defenderSoldiers
         print('                       Pagan barbarians:\t{0}'.format(defenderSoldiers))
     else:
         print('             {0}:\t{1}'.format(GetFullPlayerName(defender), int(defenderSoldiers)))
-
+        if serfsDefending == True:
+            print('\n{0}\'s serfs are forced to defend their country!'.format(players[defender][1]))
 
     #     PRINT@269,Z(K,A(K,17));" ";Z(K,0);" of ";Z(K,1);":"
     #     PRINT@169,"Soldiers remaining:";
@@ -470,7 +452,7 @@ def Attack(aggressor, defender, aggressorSoldiers, aiTurn):
 
     while True:
         ClearScreen()
-        PrintAttackInternal(aggressor, defender, aggressorSoldiers, defenderSoldiers)
+        PrintAttackInternal(aggressor, defender, aggressorSoldiers, defenderSoldiers, serfsDefending)
         sleep(.25)
 
         troopUnit = int(aggressorSoldiers / 15) + 1
@@ -483,7 +465,7 @@ def Attack(aggressor, defender, aggressorSoldiers, aiTurn):
                 landsSeized = 0
 
         if defenderLands - landsSeized < 0:
-            BattleOver2(aggressor, defender, landsSeized, aggressorSoldiers, defenderSoldiers, serfsDefending, aiTurn)
+            CountryOverrun(aggressor, defender, landsSeized, aggressorSoldiers, defenderSoldiers, serfsDefending, aiTurn)
             return    
 
         if aggressorSoldiers > 0 and defenderSoldiers > 0:
@@ -496,7 +478,7 @@ def Attack(aggressor, defender, aggressorSoldiers, aiTurn):
             defenderSoliders = 0
 
         if serfsDefending == True and aggressorSoldiers > 0:
-            BattleOver2(aggressor, defender, landsSeized, aggressorSoldiers, defenderSoldiers, serfsDefending, aiTurn)
+            CountryOverrun(aggressor, defender, landsSeized, aggressorSoldiers, defenderSoldiers, serfsDefending, aiTurn)
             return
 
         BattleOver1(aggressor, defender, landsSeized, aggressorSoldiers, defenderSoldiers, serfsDefending, aiTurn)
@@ -580,9 +562,9 @@ def BattleOver1(playerNumber, defender, landsSeized, remainingSoldiers, remainin
             playerData[playerNumber][1] = playerData[playerNumber][1] + landsSeized
 
             if serfsDefending == True:
-                playerNumber[defender][15] = 0
-                playerNumber[defender][3] = remainingDefenders
-                playerNumber[defender][1] = playerNumber[defender][1] - landsSeized
+                playerData[defender][15] = 0
+                playerData[defender][3] = remainingDefenders
+                playerData[defender][1] = playerData[defender][1] - landsSeized
                 PauseOrWait(aiTurn)
             else:
                 playerData[defender][15] = remainingDefenders
@@ -591,15 +573,15 @@ def BattleOver1(playerNumber, defender, landsSeized, remainingSoldiers, remainin
 
 
 
-def BattleOver2(playerNumber, defender, landsSeized, remainingSoldiers, remainingDefenders, serfsDefending, aiTurn):
+def CountryOverrun(attacker, defender, landsSeized, remainingAttackers, remainingDefenders, serfsDefending, aiTurn):
     global barbarianLands
 
     ClearScreen()
     print('\n                       Battle over')
     if defender < 0:
         print('All barbarian lands have been seized\nThe remaining barbarians fled')
-        playerData[playerNumber][1] = playerData[playerNumber][1] + landsSeized
-        playerData[playerNumber][15] = playerData[playerNumber][15] + remainingSoldiers
+        playerData[attacker][1] = playerData[attacker][1] + landsSeized
+        playerData[attacker][15] = playerData[attacker][15] + remainingAttackers
         barbarianLands = 0
 
     else:
@@ -612,15 +594,15 @@ def BattleOver2(playerNumber, defender, landsSeized, remainingSoldiers, remainin
         print('by your revengeful army in a drunken riot following the victory')
         print('celebration.')
 
-        playerData[playerNumber][15] = playerData[playerNumber][15] + remainingSoldiers
-        playerData[playerNumber][1] = playerData[playerNumber][1] + playerData[defender][1]
+        playerData[attacker][15] = playerData[attacker][15] + remainingAttackers
+        playerData[attacker][1] = playerData[attacker][1] + playerData[defender][1]
 
         if serfsDefending == True:
             playerData[defender][3] = remainingDefenders
 
         playerData[defender][1] = 0
         playerData[defender][0] = 1
-        playerData[playerNumber][3] = playerData[playerNumber][3] + playerData[defender][3]
+        playerData[attacker][3] = playerData[attacker][3] + playerData[defender][3]
 
     PauseOrWait(aiTurn)
 
@@ -916,9 +898,8 @@ def SellGrain(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrain
             while True:
                 ClearScreen()
                 PrintMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
-                priceInput = input('What will be the price per bushel? ')
                 try:
-                    price = int(priceInput)
+                    price = float(input('What will be the price per bushel? '))
                     if price <= 0:
                         continue
                     if price > 15:
@@ -947,9 +928,8 @@ def SellLand(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainD
         sleep(4)
         ClearScreen()
         PrintMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
-        acresInput = input('How many acres will you sell them? ')
         try:
-            acres = int(acresInput)
+            acres = int(input('How many acres will you sell them? '))
             if acres > playerData[playerNumber][1] * .95:
                 print('You must keep some land for the royal palace!')
                 sleep(4)
@@ -1001,17 +981,19 @@ def PrintMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGra
     print("{0:7,d}   {1:7,d}   {2:7,d}    {3:7,d}    {4:7,d}".format(int(grainHarvest), int(playerData[playerNumber][2]), int(peopleGrainDemands), int(armyGrainDemands), int(playerData[playerNumber][4])))
     print("bushels   bushels   bushels    bushels    {0}".format(players[playerNumber][6]))
     print("------Grain for sale:")
-    print("\t\tCountry\t\tBushels\t\tPrice")
+    print("                Country         Bushels         Price")
 
     grainForSale = False
 
     for i in range(0, 6):
         if (playerData[i][0] == 0 and playerData[i][5] > 0):
             grainForSale = True
-            print("{0}\t\t{1}\t{2}\t\t{3}".format(i + 1, players[i][1], playerData[i][5], playerData[i][6]))
+            print("{0}\t\t{1:9}\t {2}\t\t{3:5.2f}".format(i + 1, players[i][1], int(playerData[i][5]), playerData[i][6]))
 
     if grainForSale == False:
         print("\n\n\nNo grain for sale . . .\n")
+
+    print('\n\n')
 
 
 def MarketInternal(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands):
@@ -1020,9 +1002,8 @@ def MarketInternal(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, army
     while (menuItemSelected < 1 or menuItemSelected > 4) and exitMarket == False:
         ClearScreen()
         PrintMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
-        menuItem = input('1) Buy Grain 2) Sell Grain 3) Sell Land? ')
         try:
-            menuItemSelected = int(menuItem)
+            menuItemSelected = int(input('1) Buy Grain 2) Sell Grain 3) Sell Land? '))
         except ValueError:
             exitMarket = True
 
@@ -1035,9 +1016,8 @@ def DoArmyGrainShare(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, ar
     while (armyShare < 0 or armyShare > playerData[playerNumber][2]):
         ClearScreen()
         PrintMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
-        shareInput = input('How many bushels will you give to your army of {0} men? '.format(playerData[playerNumber][15]))
         try:
-            armyShare = int(shareInput)
+            armyShare = int(input('How many bushels will you give to your army of {0} men? '.format(playerData[playerNumber][15])))
             if armyShare > playerData[playerNumber][2]:
                 print('You cannot give your army more grain than you have!')
                 sleep(4)
@@ -1055,9 +1035,8 @@ def DoPeopleGrainShare(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, 
     while (peopleShare < (playerData[playerNumber][2] * 0.1) or peopleShare > playerData[playerNumber][2]):
         ClearScreen()
         PrintMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
-        shareInput = input('How many bushels will you give to your {0} people? '.format(people))
         try:
-            peopleShare = int(shareInput)
+            peopleShare = int(input('How many bushels will you give to your {0} people? '.format(people)))
             if peopleShare > playerData[playerNumber][2]:
                 print('But you only have {0} bushels of grain!'.format(int(playerData[playerNumber][2])))
                 sleep(4)
@@ -1198,9 +1177,8 @@ def InitQuestions():
     global numberOfHumanPlayers
     ClearScreen()
     while numberOfHumanPlayers < 1 or numberOfHumanPlayers > 6:
-        numPlayers = input('How many people are playing? ')
         try:
-            numberOfHumanPlayers = int(numPlayers)
+            numberOfHumanPlayers = int(input('How many people are playing? '))
         except ValueError:
             print('Answer must be an integer 1-6')
 

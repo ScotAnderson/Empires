@@ -24,8 +24,10 @@ def PrintYear(year, weather):
     print("Year {}\n".format(year))
     print(_weatherSwitcher.get(weather, "nothing"))
 
-
-
-    
-
-
+def PrintPlague(serfs, merchants, soldiers, nobles):
+    print("                      P L A G U E  ! ! !");
+    print("Black death has struck your nation.");
+    print("{0} serfs died.".format(serfs));
+    print("{0} merchants died.".format(merchants));
+    print("{0} soldiers died.".format(soldiers));
+    print("{0} nobles died.".format(soldiers));
