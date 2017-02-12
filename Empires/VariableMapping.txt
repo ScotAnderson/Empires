@@ -70,3 +70,26 @@ QR == amountOfGrainToBuy (ai turn temp variable)
 Z  == players (array)
 Z  == (you can use the same variable name for individual variables and arrays, this one is a temp variable used in various places)
 
+
+A == playerData, indexes described below:
+# 0 is if the country/player is still alive. (0 is alive, 1 is dead)
+# 1 is the amount of land the country currently has
+# 2 is the amount of grain in the reserve
+# 3 s the amount of serfs
+# 4 is the amount of money in the treasury
+# 5 is the number of bushels on the grain market
+# 6 is the price of the bushels on the grain market
+# 7 is number of merchants
+# 8 is the customs tax
+# 9 is the sales tax
+# 10 is the income tax
+# 11 is the number of marketplaces
+# 12 is the number of grain mills
+# 13 is the number of foundries
+# 14 is number of shipyards?
+# 15 is number of soldiers
+# 16 is how much of a palace has been built
+# 17 is the index of the current title in the player array
+# 18 is number of nobles
+# 19 is how well the army fights between 5 (at 50%) and 15 (at 150%)
+

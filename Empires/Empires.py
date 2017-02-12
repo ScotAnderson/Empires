@@ -14,7 +14,7 @@ players = [
     ['Hjodolf', 'Svealand', 'Riddare', 'Prins', 'Kung', 'Kejsare', 'krona']
 ]
 randDeathStrings = [
-    '{0} has been assassinated by an ambitions\noble',
+    '{0} has been assassinated by an ambitious\noble',
     '{0} has been killed from a fall during\nthe annual fox-hunt.',
     '{0} died of acute food poisoning.\nThe royal cook was summarily executed.',
     '{0} passed away this winter from a weak heart.'
@@ -23,9 +23,8 @@ randDeathStrings = [
 def safeRandInt(lower, upper):
     if lower >= upper:
         return upper
-    return randint(lower, upper)
+    return randint(lower, int(upper))
 
-#Pretty sure this stores various data about the players (ie, think 2 is amount of grain in storage, etc.)
 # 0 is if the country/player is still alive. (0 is alive, 1 is dead)
 # 1 is the amount of land the country currently has
 # 2 is the amount of grain in the reserve
@@ -59,7 +58,10 @@ playerData = [
 barbarianLands = 6000
 
 def GetFullPlayerName(playerNumber):
-    return "{0} {1} of {2}".format(players[playerNumber][playerData[playerNumber][17]], players[playerNumber][0], players[playerNumber][1])
+    return "{0} of {1}".format(GetTitleName(playerNumber), players[playerNumber][1])
+
+def GetTitleName(playerNumber):
+    return '{0} {1}'.format(players[playerNumber][playerData[playerNumber][17]], players[playerNumber][0])
 
 
 # Original code 395- - 409
@@ -96,7 +98,7 @@ def DoAITurn(playerNumber, weather):
         return
 
     ClearScreen()
-    print("One moment -- {0} {1}'s turn . . .".format(players[playerNumber][playerData[playerNumber][17]], players[playerNumber][0]))
+    print("One moment -- {0}'s turn . . .".format(GetTitleName(playerNumber)))
     sleep(.25)
 
     CheckForRandomDeath(playerNumber)
@@ -104,19 +106,19 @@ def DoAITurn(playerNumber, weather):
     if playerData[playerNumber][0] != 0:
         return
 
-    serfs = 0        #Q2
-    grainMarket = 0  #Q3
-    priceMarket = 0  #Q4
-    money = 0        #Q5
-    merchants = 0    #Q6
-    marketplaces = 0 #Q7
-    mills = 0        #Q8
-    foundries = 0    #Q9
-    shipyards = 0    #Q0
-    palace = 0       #QB
-    nobles = 0       #QC
-    armyEffectiveness = 0  #QD
-    howManyHumanPlayersAreAlive = 0  #QP
+    serfs        = 0
+    grainMarket  = 0
+    priceMarket  = 0
+    money        = 0
+    merchants    = 0
+    marketplaces = 0
+    mills        = 0
+    foundries    = 0
+    shipyards    = 0
+    palace       = 0
+    nobles       = 0
+    armyEffectiveness = 0
+    howManyHumanPlayersAreAlive = 0
 
     for q in range(0, numberOfHumanPlayers):
         if playerData[q][0] == 0:
@@ -424,7 +426,7 @@ def PrintAttackInternal(aggressor, defender, aggressorSoldiers, defenderSoldiers
     if defender < 0:
         print('                       Pagan barbarians:\t{0}'.format(defenderSoldiers))
     else:
-        print('             {0}:\t{1}'.format(GetFullPlayerName(defender), defenderSoldiers))
+        print('             {0}:\t{1}'.format(GetFullPlayerName(defender), int(defenderSoldiers)))
 
 
     #     PRINT@269,Z(K,A(K,17));" ";Z(K,0);" of ";Z(K,1);":"
@@ -469,7 +471,7 @@ def Attack(aggressor, defender, aggressorSoldiers, aiTurn):
     while True:
         ClearScreen()
         PrintAttackInternal(aggressor, defender, aggressorSoldiers, defenderSoldiers)
-        sleep(.5)
+        sleep(.25)
 
         troopUnit = int(aggressorSoldiers / 15) + 1
         if safeRandInt(1, aggressorSoldierStrength) < safeRandInt(1, defenderSoldierStrength):
@@ -533,7 +535,7 @@ def BattleOver1(playerNumber, defender, landsSeized, remainingSoldiers, remainin
         barbarianLands = barbarianLands - landsSeized
         PauseOrWait(aiTurn)
     else:
-        if landsSeized > playerData[defender][5] / 3:
+        if landsSeized > playerData[defender][1] / 3:
             if playerData[defender][3] > 0:
                 serfs = safeRandInt(1, playerData[defender][3])
                 print('{0} enemy serfs were beaten and murdered by your troops!'.format(serfs))
@@ -1155,7 +1157,7 @@ def CheckForRandomDeath(playerNumber):
         PrintVerySadNews()
         death = safeRandInt(0, 3)
         print(randDeathStrings[death].format(GetFullPlayerName(playerNumber)))
-        playerData[playerNumber, 0] = 1
+        playerData[playerNumber][0] = 1
         print('\n\nThe other nation-states have sent representatives to the\nfuneral')
         sleep(8)
 
@@ -1168,7 +1170,7 @@ def PrintYearSummary():
     print("Nobles   Soldiers   Merchants   Serfs   Land    Palace\n")
     for i in range(0, 6):
         print(GetFullPlayerName(i))
-        print(" {0:3d}      {1:6,d}      {2:6,d}   {3:7,d}  {4:6,d}  {5:3d}%".format(playerData[i][18], playerData[i][15], playerData[i][7], playerData[i][3], playerData[i][1], playerData[i][16] * 10))
+        print(" {0:3d}      {1:6,d}      {2:6,d}   {3:7,d}  {4:6,d}  {5:3d}%".format(int(playerData[i][18]), int(playerData[i][15]), int(playerData[i][7]), int(playerData[i][3]), playerData[i][1], int(playerData[i][16] * 10)))
 
 
 
@@ -1205,8 +1207,12 @@ def InitQuestions():
     for i in range(0, numberOfHumanPlayers):
         players[i][0] = input('Who is the ruler of {}? '.format(players[i][1]));
 
+
+
 PrintTitle()
 InitQuestions()
-MainLoop()
+
+while True:
+    MainLoop()
 
 
