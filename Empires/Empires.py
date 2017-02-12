@@ -56,7 +56,6 @@ playerData = [
     [0, 10000, 15000 + safeRandInt(1, 10000), 2000, 1000, 0, 0, 25, 20, 5, 35,  0,  0,  0,  0, 20,  0,  2,  1, 15]
 ]
 
-#Suspect this is how much land the barbarians have...
 barbarianLands = 6000
 
 def GetFullPlayerName(playerNumber):
@@ -250,6 +249,8 @@ def DoAITurn(playerNumber, weather):
 
 # Original code 359 - 369
 def CheckForTitles(playerNumber, aiTurn):
+    checkForTitles = False
+
     # Check for the "prince" title
     if playerData[playerNumber][11] > 7 and \
        playerData[playerNumber][12] > 3 and \
@@ -258,6 +259,7 @@ def CheckForTitles(playerNumber, aiTurn):
        playerData[playerNumber][3] > 2300 and \
        playerData[playerNumber][18] > 10:
         playerData[playerNumber][17] = 3
+        checkForTitles = True
 
     # Check for the "king" title
     if playerData[playerNumber][11] > 13 and \
@@ -268,6 +270,7 @@ def CheckForTitles(playerNumber, aiTurn):
        playerData[playerNumber][3] > 2600 and \
        playerData[playerNumber][18] > 25:
         playerData[playerNumber][17] = 4
+        checkForTitles = True
 
     # Check for the "Emperor" title
     if playerData[playerNumber][17] > 3 and \
@@ -281,7 +284,7 @@ def CheckForTitles(playerNumber, aiTurn):
         PrintYearSummary()
         exit()
 
-    if aiTurn == True:
+    if checkForTitles == True and aiTurn == True:
         sleep(4)
 
     
