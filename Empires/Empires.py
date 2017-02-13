@@ -402,33 +402,15 @@ def DoAttacks(playerNumber):
 
 def PrintAttackInternal(aggressor, defender, aggressorSoldiers, defenderSoldiers, serfsDefending):
     print('\n\n                                        Soldiers remaining:')
-    print('\n             {0}:\t{1}'.format(GetFullPlayerName(aggressor), aggressorSoldiers))
+    print('\n  {0:>36}:           {1:3}'.format(GetFullPlayerName(aggressor), aggressorSoldiers))
 
     if defender < 0:
-        print('                       Pagan barbarians:\t{0}'.format(defenderSoldiers))
+        print('                        Pagan barbarians:           {0:3}'.format(defenderSoldiers))
     else:
-        print('             {0}:\t{1}'.format(GetFullPlayerName(defender), int(defenderSoldiers)))
+        print('  {0:>36}:           {1:3}'.format(GetFullPlayerName(defender), int(defenderSoldiers)))
         if serfsDefending == True:
             print('\n{0}\'s serfs are forced to defend their country!'.format(players[defender][1]))
 
-    #     PRINT@269,Z(K,A(K,17));" ";Z(K,0);" of ";Z(K,1);":"
-    #     PRINT@169,"Soldiers remaining:";
-    #     PRINT@333,Z(I,A(I,17));" ";Z(I,0);" of ";Z(I,1);":"
-    #     PRINT@512,Z(I,1);"'s serfs are forced to defend their country!"
-    #     PRINT@306,CHR$(30);:PRINT@306,INT(I1);:PRINT@370,CHR$(30);:PRINT@370,INT(I2);:
-
-
-
-# I0 == defenders available land
-# I1 == attacking soldiers
-# I2 == defending soldiers
-# I3 == defending soldier strength
-# I4 == attackers soldier strength
-# I5 == lands seized
-# IH == flag for if serfs are defending?
-# O1 == how long to take per tick, to keep combat from being too fast for low numbers of soldiers?
-# I7 == how many soldiers to lose per tick?
-    
 
 def Attack(aggressor, defender, aggressorSoldiers, aiTurn):
     aggressorSoldierStrength = playerData[aggressor][19]
@@ -453,7 +435,7 @@ def Attack(aggressor, defender, aggressorSoldiers, aiTurn):
     while True:
         ClearScreen()
         PrintAttackInternal(aggressor, defender, aggressorSoldiers, defenderSoldiers, serfsDefending)
-        sleep(.25)
+        sleep(.15)
 
         troopUnit = int(aggressorSoldiers / 15) + 1
         if safeRandInt(1, aggressorSoldierStrength) < safeRandInt(1, defenderSoldierStrength):
@@ -500,10 +482,10 @@ def BattleOver1(playerNumber, defender, landsSeized, remainingSoldiers, remainin
     print('\n                       Battle over\n')
 
     if remainingSoldiers > 0:
-        print('The forces of {0} {1} were victorious.'.format(players[playerNumber][playerData[playerNumber][17]], players[playerNumber][0]))
+        print('The forces of {0} were victorious.'.format(GetTitleName(playerNumber)))
         print('{0} acres were seized'.format(landsSeized))
     else:
-        print('{0} {1} was defeated.'.format(players[playerNumber][playerData[playerNumber][17]], players[playerNumber][0]))
+        print('{0} was defeated.'.format(GetTitleName(playerNumber)))
         if landsSeized < 2:
             landsSeized = 0
             print('{0} acres were seized'.format(landsSeized))
@@ -517,6 +499,16 @@ def BattleOver1(playerNumber, defender, landsSeized, remainingSoldiers, remainin
         barbarianLands = barbarianLands - landsSeized
         PauseOrWait(aiTurn)
     else:
+        playerData[playerNumber][15] = playerData[playerNumber][15] + remainingSoldiers
+        playerData[playerNumber][1] = playerData[playerNumber][1] + landsSeized
+        playerData[defender][1] = playerData[defender][1] - landsSeized
+        
+        if serfsDefending == True:
+            playerData[defender][15] = 0
+            playerData[defender][3] = remainingDefenders
+        else:
+            playerData[defender][15] = remainingDefenders
+
         if landsSeized > playerData[defender][1] / 3:
             if playerData[defender][3] > 0:
                 serfs = safeRandInt(1, playerData[defender][3])
@@ -553,24 +545,7 @@ def BattleOver1(playerNumber, defender, landsSeized, remainingSoldiers, remainin
                 print('{0} enemy nobles were summarily executed'.format(nobles))
                 playerData[defender][18] = playerData[defender][18] - nobles
 
-            playerData[playerNumber][1] = playerData[playerNumber][1] + landsSeized
-            playerData[defender][1] = playerData[defender][1] - landsSeized
-            PauseOrWait(aiTurn)
-
-        else:
-            playerData[playerNumber][15] = playerData[playerNumber][15] + remainingSoldiers
-            playerData[playerNumber][1] = playerData[playerNumber][1] + landsSeized
-
-            if serfsDefending == True:
-                playerData[defender][15] = 0
-                playerData[defender][3] = remainingDefenders
-                playerData[defender][1] = playerData[defender][1] - landsSeized
-                PauseOrWait(aiTurn)
-            else:
-                playerData[defender][15] = remainingDefenders
-                playerData[defender][1] = playerData[defender][1] - landsSeized
-                PauseOrWait(aiTurn)
-
+        PauseOrWait(aiTurn)
 
 
 def CountryOverrun(attacker, defender, landsSeized, remainingAttackers, remainingDefenders, serfsDefending, aiTurn):
@@ -795,34 +770,33 @@ def PrintTaxesAndInvestments(playerNumber,
                              foundryProfit,
                              shipyardProfit,
                              soldierCost):
-    print('State revenues:    Treasury={0:7,d} {1}'.format(int(playerData[playerNumber][4]), players[playerNumber][6]))
+    print('State revenues:    Treasury={0:10,.2f} {1}'.format(int(playerData[playerNumber][4]), players[playerNumber][6]))
     print('Customs duty    Sales tax       Income tax')
     print(' {0} %            {1} %              {2} %'.format(int(playerData[playerNumber][8]), int(playerData[playerNumber][9]), int(playerData[playerNumber][10])))
     print(' {0}             {1}             {2}'.format(int(customsCollected + .5), int(salesCollected + .5), int(incomeCollected + .5)))
-    print('\nInvestments     Number           Profits           Cost')
-    print('1) Marketplaces  {0}                {1}                1000'.format(playerData[playerNumber][11], int(marketProfit)))
-    print('2) Grain mills   {0}                {1}                2000'.format(playerData[playerNumber][12], int(millProfit)))
-    print('3) Foundries     {0}                {1}                7000'.format(playerData[playerNumber][13], int(foundryProfit)))
-    print('4) Shipyards     {0}                {1}                8000'.format(playerData[playerNumber][14], int(shipyardProfit)))
-    print('5) Soldiers      {0}              {1}              8'.format(playerData[playerNumber][15], soldierCost))
-    print('6) Palace        {0}% Completed                      5000\n\n'.format(playerData[playerNumber][16] * 10))
-    #TODO: Fix the number padding on the above table so it looks right with various values
-
-
+    print('')
+    print('Investments     Number          Profits           Cost')
+    print('1) Marketplaces  {0:<5d}           {1:<5d}            1000'.format(playerData[playerNumber][11], int(marketProfit)))
+    print('2) Grain mills   {0:<5d}           {1:<5d}            2000'.format(playerData[playerNumber][12], int(millProfit)))
+    print('3) Foundries     {0:<5d}           {1:<5d}            7000'.format(playerData[playerNumber][13], int(foundryProfit)))
+    print('4) Shipyards     {0:<5d}           {1:<5d}            8000'.format(playerData[playerNumber][14], int(shipyardProfit)))
+    print('5) Soldiers      {0:<5d}          {1:< 6d}            8'.format(playerData[playerNumber][15], soldierCost))
+    print('6) Palace        {0:<16}                 5000\n\n'.format('{0}% Completed'.format(playerData[playerNumber][16] * 10)))
 
 
 def BuyGrain(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands):
     while True:
         ClearScreen()
         PrintMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
-        countryInput = input('From which country  (give #)? ')
         try:
-            country = int(countryInput)
+            country = int(input('From which country  (give #)? '))
             if country == 0:
                 return
 
             if country < 1 or country > 6:
                 continue
+
+            country = country - 1
 
             if playerData[country][0] == 1 or playerData[country][5] == 0:
                 ClearScreen()
@@ -1148,8 +1122,9 @@ def PrintYearSummary():
     print("Summary")
     print("Nobles   Soldiers   Merchants   Serfs   Land    Palace\n")
     for i in range(0, 6):
-        print(GetFullPlayerName(i))
-        print(" {0:3d}      {1:6,d}      {2:6,d}   {3:7,d}  {4:6,d}  {5:3d}%".format(int(playerData[i][18]), int(playerData[i][15]), int(playerData[i][7]), int(playerData[i][3]), playerData[i][1], int(playerData[i][16] * 10)))
+        if playerData[i][0] == 0:
+            print(GetFullPlayerName(i))
+            print(" {0:3d}      {1:6,d}      {2:6,d}   {3:7,d}  {4:6,d}  {5:3d}%".format(int(playerData[i][18]), int(playerData[i][15]), int(playerData[i][7]), int(playerData[i][3]), playerData[i][1], int(playerData[i][16] * 10)))
 
 
 
@@ -1184,8 +1159,6 @@ def InitQuestions():
 
     for i in range(0, numberOfHumanPlayers):
         players[i][0] = input('Who is the ruler of {}? '.format(players[i][1]));
-
-
 
 PrintTitle()
 InitQuestions()
