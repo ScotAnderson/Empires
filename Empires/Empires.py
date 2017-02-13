@@ -14,7 +14,7 @@ players = [
     ['Hjodolf', 'Svealand', 'Riddare', 'Prins', 'Kung', 'Kejsare', 'krona']
 ]
 randDeathStrings = [
-    '{0} has been assassinated by an ambitious\noble',
+    '{0} has been assassinated by an ambitious\nnoble',
     '{0} has been killed from a fall during\nthe annual fox-hunt.',
     '{0} died of acute food poisoning.\nThe royal cook was summarily executed.',
     '{0} passed away this winter from a weak heart.'
@@ -311,10 +311,13 @@ def DoHumanTurn(playerNumber, weather):
     starvationDeaths, immigrations = DoMarket(playerNumber, grainHarvest, ratsAte, peopleGrainDemands, armyGrainDemands)
     CheckForHumanPlayerRandomDeath(playerNumber, starvationDeaths)
 
-    DoTaxesAndInvestments(playerNumber, grainHarvest, immigrations, weather)
-    # TODO: Continue turn with Taxes and Investments! (line 189 from the original code)
+    if playerData[playerNumber][0] != 0:
+        return
 
+    DoTaxesAndInvestments(playerNumber, grainHarvest, immigrations, weather)
     DoAttacks(playerNumber)
+
+
 
 def PrintAttacks():
     print('Land holdings:\n')
@@ -412,58 +415,61 @@ def PrintAttackInternal(aggressor, defender, aggressorSoldiers, defenderSoldiers
             print('\n{0}\'s serfs are forced to defend their country!'.format(players[defender][1]))
 
 
-def Attack(aggressor, defender, aggressorSoldiers, aiTurn):
-    aggressorSoldierStrength = playerData[aggressor][19]
-    playerData[aggressor][15] = playerData[aggressor][15] - aggressorSoldiers
+def Attack(attacker, defender, attackingSoldiers, aiTurn):
+    attackingSoldierStrength = playerData[attacker][19]
+    playerData[attacker][15] = playerData[attacker][15] - attackingSoldiers
+    defendingSoldiers = 0
+    defendingSoldierStrength = 0
+    defenderLands = 0
     serfsDefending = False
     landsSeized = 0
 
     if defender < 0:
-        defenderSoldiers = safeRandInt(1, safeRandInt(1, aggressorSoldiers * 3)) + safeRandInt(1, safeRandInt(1, aggressorSoldiers * 1.5))
-        defenderSoldierStrength = 9
+        defendingSoldiers = safeRandInt(1, safeRandInt(1, attackingSoldiers * 3)) + safeRandInt(1, safeRandInt(1, attackingSoldiers * 1.5))
+        defendingSoldierStrength = 9
         defenderLands = barbarianLands
     else:
-        defenderSoldiers = playerData[defender][15]
-        defenderSoldierStrength = playerData[defender][19]
+        defendingSoldiers = playerData[defender][15]
+        defendingSoldierStrength = playerData[defender][19]
         defenderLands = playerData[defender][1]
 
         if playerData[defender][15] < 1:
-            defenderSoldiers = playerData[defender][3]
-            defenderSoldierStrength = 5
+            defendingSoldiers = playerData[defender][3]
+            defendingSoldierStrength = 5
             serfsDefending = True
 
     while True:
         ClearScreen()
-        PrintAttackInternal(aggressor, defender, aggressorSoldiers, defenderSoldiers, serfsDefending)
+        PrintAttackInternal(attacker, defender, attackingSoldiers, defendingSoldiers, serfsDefending)
         sleep(.15)
 
-        troopUnit = int(aggressorSoldiers / 15) + 1
-        if safeRandInt(1, aggressorSoldierStrength) < safeRandInt(1, defenderSoldierStrength):
-            aggressorSoldiers = aggressorSoldiers - troopUnit
+        troopUnit = int(attackingSoldiers / 15) + 1
+        if safeRandInt(1, attackingSoldierStrength) < safeRandInt(1, defendingSoldierStrength):
+            attackingSoldiers -= troopUnit
         else:
             landsSeized = landsSeized + safeRandInt(1, troopUnit * 26) - safeRandInt(1, troopUnit + 5)
-            defenderSoldiers = defenderSoldiers - troopUnit
+            defendingSoldiers -= troopUnit
             if landsSeized < 0:
                 landsSeized = 0
 
         if defenderLands - landsSeized < 0:
-            CountryOverrun(aggressor, defender, landsSeized, aggressorSoldiers, defenderSoldiers, serfsDefending, aiTurn)
+            CountryOverrun(attacker, defender, landsSeized, attackingSoldiers, defendingSoldiers, serfsDefending, aiTurn)
             return    
 
-        if aggressorSoldiers > 0 and defenderSoldiers > 0:
+        if attackingSoldiers > 0 and defendingSoldiers > 0:
             continue
 
-        if aggressorSoldiers < 0:
-            aggressorSoldiers = 0
+        if attackingSoldiers < 0:
+            attackingSoldiers = 0
 
-        if defenderSoldiers < 0:
-            defenderSoliders = 0
+        if defendingSoldiers < 0:
+            defendingSoldiers = 0
 
-        if serfsDefending == True and aggressorSoldiers > 0:
-            CountryOverrun(aggressor, defender, landsSeized, aggressorSoldiers, defenderSoldiers, serfsDefending, aiTurn)
+        if serfsDefending == True and attackingSoldiers > 0:
+            CountryOverrun(attacker, defender, landsSeized, attackingSoldiers, defendingSoldiers, serfsDefending, aiTurn)
             return
 
-        BattleOver1(aggressor, defender, landsSeized, aggressorSoldiers, defenderSoldiers, serfsDefending, aiTurn)
+        BattleOver1(attacker, defender, landsSeized, attackingSoldiers, defendingSoldiers, serfsDefending, aiTurn)
         return
 
 
@@ -497,7 +503,6 @@ def BattleOver1(playerNumber, defender, landsSeized, remainingSoldiers, remainin
         playerData[playerNumber][15] = playerData[playerNumber][15] + remainingSoldiers
         playerData[playerNumber][1] = playerData[playerNumber][1] + landsSeized
         barbarianLands = barbarianLands - landsSeized
-        PauseOrWait(aiTurn)
     else:
         playerData[playerNumber][15] = playerData[playerNumber][15] + remainingSoldiers
         playerData[playerNumber][1] = playerData[playerNumber][1] + landsSeized
@@ -544,8 +549,8 @@ def BattleOver1(playerNumber, defender, landsSeized, remainingSoldiers, remainin
                 nobles = safeRandInt(1, playerData[defender][18] / 2)
                 print('{0} enemy nobles were summarily executed'.format(nobles))
                 playerData[defender][18] = playerData[defender][18] - nobles
-
-        PauseOrWait(aiTurn)
+    
+    PauseOrWait(aiTurn)
 
 
 def CountryOverrun(attacker, defender, landsSeized, remainingAttackers, remainingDefenders, serfsDefending, aiTurn):
@@ -560,7 +565,7 @@ def CountryOverrun(attacker, defender, landsSeized, remainingAttackers, remainin
         barbarianLands = 0
 
     else:
-        print('The country of {0} was overrun!'.format(players[defender - 1][1]))
+        print('The country of {0} was overrun!'.format(players[defender][1]))
         print('All enemy nobles were summarily executed!\n\n')
         print('The remaining enemy soldiers were imprisoned. All enemy serfs')
         print('have pledged oaths of fealty to you, And should now be consid-')
