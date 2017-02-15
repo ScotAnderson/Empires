@@ -317,7 +317,7 @@ def DoHumanTurn(playerNumber, weather):
     DoTaxesAndInvestments(playerNumber, grainHarvest, immigrations, weather)
     DoAttacks(playerNumber)
 
-
+        
 
 def PrintAttacks():
     print('Land holdings:\n')
@@ -469,7 +469,7 @@ def Attack(attacker, defender, attackingSoldiers, aiTurn):
             CountryOverrun(attacker, defender, landsSeized, attackingSoldiers, defendingSoldiers, serfsDefending, aiTurn)
             return
 
-        BattleOver1(attacker, defender, landsSeized, attackingSoldiers, defendingSoldiers, serfsDefending, aiTurn)
+        BattleOver(attacker, defender, landsSeized, attackingSoldiers, defendingSoldiers, serfsDefending, aiTurn)
         return
 
 
@@ -481,7 +481,7 @@ def PauseOrWait(aiTurn):
         input('<Enter>?')
 
 
-def BattleOver1(playerNumber, defender, landsSeized, remainingSoldiers, remainingDefenders, serfsDefending, aiTurn):
+def BattleOver(playerNumber, defender, landsSeized, remainingSoldiers, remainingDefenders, serfsDefending, aiTurn):
     global barbarianLands
 
     ClearScreen()
