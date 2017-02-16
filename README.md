@@ -1,5 +1,5 @@
 # Empires
-(Not yet functional!)
+Totally functional! Still has some minor bugs, but is mostly playable. Doesn't currently detect and end when all human players are dead.
 
 Remake of an old text game (Rats ate 23% of the grain reserve)
 
